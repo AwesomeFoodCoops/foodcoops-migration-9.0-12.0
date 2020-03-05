@@ -6,7 +6,7 @@ import click_odoo
 @click_odoo.env_options(default_log_level='error')
 def main(env):
     modules_to_uninstall = [
-        'date_range', 'account_cancel', 'account_deprecated',
+        'account_cancel', 'account_deprecated',
         'account_payment_transfer_account', 'account_budget',
         'pos_transfer_account',
         'account_finance_report_xlsx', 'smile_base', 'smile_upgrade',

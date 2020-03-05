@@ -21,7 +21,7 @@ def main(env):
 
         ]
     for m in MODULES_TO_UNINSTALL:
-        print('Installing module: %s..' % m)
+        print('Uninstalling module: %s..' % m)
         module_id = env['ir.module.module'].search([('name', '=', m)])
         if module_id:
             module_id.button_immediate_uninstall()
@@ -34,7 +34,7 @@ def main(env):
         'barcodes_generator_product', 'pos_order_return',
         'pos_ticket_send_by_mail',
         'account_bank_statement_reconciliation_report',
-
+        'coop_default_pricetag',
     ]
     for m in MODULES_TO_INSTALL:
         print('Installing module: %s..' % m)

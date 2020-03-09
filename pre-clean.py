@@ -6,11 +6,12 @@ import click_odoo
 @click_odoo.env_options(default_log_level='error')
 def main(env):
     modules_to_uninstall = [
+        'account_payment_transfer_account', 'louve_custom_account',
         'account_cancel', 'account_deprecated',
-        'account_payment_transfer_account', 'account_budget',
+        'account_budget',
         'pos_transfer_account',
         'account_finance_report_xlsx', 'smile_base', 'smile_upgrade',
-        'louve_custom_account', 'louve_custom_product', 'louve_custom_email',
+        'louve_custom_product', 'louve_custom_email',
         'louve_welcome_email',
         'account_asset', 'web_sheet_full_width',
 
@@ -21,10 +22,10 @@ def main(env):
         'pos_product_barcodes',  # Merged with coop_point_of_sale
 
         # Modules to Migrate.
-        'web_widget_image_webcam', 'coop_produce', 'l10n_fr_department',
-        'date_search_extended', 'account_product_fiscal_classification',
-        'product_to_scale_bizerba', 'edi_purchase_base', 'mass_editing',
-        'pos_session_summary', 'account_check_deposit',
+        'web_widget_image_webcam', 'coop_produce',
+        'date_search_extended',
+        'product_to_scale_bizerba', 'mass_editing',
+        'pos_session_summary',
         'account_bank_statement_reconcile_option',
         'pos_automatic_cashdrawer', 'account_reconcile_pos_payments',
         'pos_payment_terminal_return', 'account_bank_reconciliation_rule',
@@ -53,6 +54,8 @@ def main(env):
             module_id.button_immediate_uninstall()
         else:
             print('Module not found: %s' % module)
+
+    print('Pre cleaning finished successfully!')
 
 
 if __name__ == '__main__':

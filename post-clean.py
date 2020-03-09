@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from __future__ import print_function
 import click
 import click_odoo
@@ -7,7 +7,12 @@ import click_odoo
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
-    MODULES_TO_UNINSTALL = [
+    print('Starting post clean...')
+    ir_module = env['ir.module.module']
+    print('modules list updated...')
+    ir_module.update_list()
+    modules_to_uninstall = [
+        'account_export', 'marketing_campaign', 'hw_proxy',
         'create_users_partners', 'connector',
         'hr_equipment',  # Not found in 12.0, exist in 9.0 core modules
         'barcodes_generate',
@@ -18,17 +23,18 @@ def main(env):
 
         # Not Migrated yet.
         'l10n_fr_pos_cert_base',
+        'account_product_fiscal_classification'
 
         ]
-    for m in MODULES_TO_UNINSTALL:
+    for m in modules_to_uninstall:
         print('Uninstalling module: %s..' % m)
-        module_id = env['ir.module.module'].search([('name', '=', m)])
+        module_id = ir_module.search([('name', '=', m)])
         if module_id:
             module_id.button_immediate_uninstall()
         else:
             print('Module not found: %s' % m)
 
-    MODULES_TO_INSTALL = [
+    modules_to_install = [
         'queue_job', 'web_responsive', 'product_print_category',
         'barcodes_generator_abstract', 'barcodes_generator_partner',
         'barcodes_generator_product', 'pos_order_return',
@@ -36,13 +42,31 @@ def main(env):
         'account_bank_statement_reconciliation_report',
         'coop_default_pricetag',
     ]
-    for m in MODULES_TO_INSTALL:
+    for m in modules_to_install:
         print('Installing module: %s..' % m)
-        module_id = env['ir.module.module'].search([('name', '=', m)])
+        module_id = ir_module.search([('name', '=', m)])
         if module_id:
-            module_id.button_immediate_install()
+            module_id.button_install()
         else:
             print('Module not found: %s' % m)
+
+    #  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
+    #  'create.shifts.wizard' in action definition. module: coop_shift
+    env.cr.execute("delete from ir_act_window where name = 'Create Shifts';")
+    ir_module.update_list()
+    env.cr.commit()
+    modules = ir_module.search(
+        [('state', 'in', ('installed', 'to upgrade'))])
+    if modules:
+        print('Updating All modules...', len(modules))
+        modules.button_upgrade()
+
+    # for account.jounal model: 'payment_mode' field is renamed to
+    # 'pos_terminal_payment_mode' in pos_payment_terminal module
+    env.cr.execute(
+        'update account_journal set pos_terminal_payment_mode=payment_mode;')
+
+    print('Post cleaning finished successfully!')
 
 
 if __name__ == '__main__':

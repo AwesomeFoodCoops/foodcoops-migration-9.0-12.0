@@ -5,6 +5,7 @@ import click_odoo
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
+    print('Pre cleaning started...')
     modules_to_uninstall = [
         'account_payment_transfer_account', 'louve_custom_account',
         'account_cancel', 'account_deprecated',

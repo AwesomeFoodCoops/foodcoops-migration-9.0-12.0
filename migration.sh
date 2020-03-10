@@ -14,7 +14,6 @@ fi
 CONFIG=./odoo.conf
 POST_CONFIG=./post_clean.conf
 
-echo 'Pre cleaning started...'
 python pre-clean.py -d $DB -c $CONFIG
 
 if [[ $(echo "$CHECKPOINT <= 10.0" | bc -l) -eq 1 ]]; then
@@ -46,11 +45,13 @@ if [[ $(echo "$CHECKPOINT <= 12.0" | bc -l) -eq 1 ]]; then
   click-odoo-dropdb -c $CONFIG --if-exists $CURRDB
   click-odoo-copydb -c $CONFIG -f $PREDB $CURRDB
 
-  for script in ~/workspace/FoodCoops_12/*/pre_migrate.sh;
+  for script in ./pre_migrate/*.sh;
   do
-    echo 'Pre-migrate script::: '$script
-    /bin/bash /$script $CURRDB
-
+    if [ -e "$script" ]
+    then
+      echo 'Pre-migrate script::: '$script
+      /bin/bash $script $CURRDB
+    fi
   done
 
   # Change in inherited form view of res.partner in purchase_discount module
@@ -74,15 +75,17 @@ if [[ $(echo "$CHECKPOINT <= 12.0" | bc -l) -eq 1 ]]; then
   echo 'Updating to 12.0..'
   /openupgrade/12.0/odoo-bin -c $CONFIG -d $CURRDB --addons-path=/openupgrade/12.0/odoo/addons,/openupgrade/12.0/addons --logfile=/proc/self/fd/1 --update all --stop-after-init
 
-  echo 'Post cleaning started...'
   python3 post-clean.py -d $CURRDB -c $POST_CONFIG
 
-#  echo 'Post Migration started...'
-#  for script in ~/workspace/FoodCoops_12/*/post_migrate.sh;
-#  do
-#    echo 'Post-migrate script::: '$script
-#    /bin/bash /$script $CURRDB
-#
-#  done
+  echo 'Post Migration started...'
+  for script in ./post_migrate/*.sh;
+  do
+    if [ -e "$script" ]
+    then
+      echo 'Post-migrate script::: '$script
+      /bin/bash $script $CURRDB
+    fi
+  done
+
   echo 'finshed all processes...'
 fi

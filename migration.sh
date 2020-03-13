@@ -77,7 +77,7 @@ if [[ $(echo "$CHECKPOINT <= 12.0" | bc -l) -eq 1 ]]; then
 
   python3 post-clean.py -d $CURRDB -c $POST_CONFIG
 
-  echo 'Post Migration started...'
+  echo 'Post Migration scripts started...'
   for script in ./post_migrate/*.sh;
   do
     if [ -e "$script" ]
@@ -87,5 +87,8 @@ if [[ $(echo "$CHECKPOINT <= 12.0" | bc -l) -eq 1 ]]; then
     fi
   done
 
-  echo 'finshed all processes...'
+  psql -d $CURRDB -c "delete from ir_act_window where name = 'Create Shifts';"
+echo 'Updating to 12.0 all modules..'
+/home/krunal/workspace/12.0/odoo-bin -c $POST_CONFIG -d $CURRDB --logfile=/proc/self/fd/1 --update all --stop-after-init
+
 fi

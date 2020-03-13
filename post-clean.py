@@ -68,6 +68,16 @@ def main(env):
     #  'create.shifts.wizard' in action definition. module: coop_shift
     env.cr.execute("delete from ir_act_window where name = 'Create Shifts';")
 
+    pos_configs = env['pos.config'].search([])
+    for config in pos_configs:
+        if config.pricelist_id:
+            config.write(
+                {
+                    'use_pricelist': True,
+                    'available_pricelist_ids': [(4, config.pricelist_id.id)],
+                 }
+            )
+
     print('Post cleaning finished successfully!')
 
 

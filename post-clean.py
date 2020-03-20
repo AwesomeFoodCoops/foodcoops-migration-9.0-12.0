@@ -18,6 +18,7 @@ def main(env):
         'pos_ticket_send_by_mail',
         'account_bank_statement_reconciliation_report',
         'coop_default_pricetag',
+        'coop_account_check_deposit',
     ]
     for m in modules_to_install:
         print('Installing module: %s..' % m)

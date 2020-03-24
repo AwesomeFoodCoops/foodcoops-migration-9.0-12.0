@@ -1,14 +1,13 @@
-# foodcoops-migration-9.0-12.0
 **Foodcoops Database Migration scripts from 9.0 to 12.0**
 
-To migrate a database from 9.0 to 12.0, openupgrade needs to be downloaded.
+To migrate a database from 9.0 to 12.0, using openupgrade.
 
-For that run the following command in the terminal:
 
-`/bin/bash get_openupgrade.sh`
+First step is downloading openupgrade and all the required repositories.
+
+`./setup.py`
 
 By executing this command, openupgrade versions 9.0, 10.0, 11.0 and 12.0 will be downloaded.
-
 To know more about Openupgrade project, follow this link: https://github.com/OCA/OpenUpgrade
 
 Please set the addons_path in odoo.conf and post_clean.conf files according to the local system.

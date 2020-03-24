@@ -9,7 +9,7 @@ def main(env):
     print('Pre cleaning started...')
 
     modules_to_uninstall = (
-        + MODULES_TO_UNINSTALL
+        MODULES_TO_UNINSTALL
         + MODULES_PENDING_MIGRATION
         + [i[0] for i in MODULES_TO_REPLACE]
     )
@@ -21,7 +21,7 @@ def main(env):
         # These will be uninstalled by post-clean.
         depended_by = env['ir.module.module'].search([
             ('state', 'in', ['installed', 'to upgrade']),
-            ('dependencies_id', 'in', module)])
+            ('dependencies_id', '=', module)])
         if depended_by:
             print((
                 'Skipping module uninstall: %s, '

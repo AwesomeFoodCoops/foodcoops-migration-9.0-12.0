@@ -64,6 +64,7 @@ def _install_modules(env):
     '''
     Install all planned to install modules
     '''
+    ir_module = env['ir.module.module']
     modules_to_install = (
         MODULES_TO_INSTALL
         + [i[1] for i in MODULES_TO_REPLACE]

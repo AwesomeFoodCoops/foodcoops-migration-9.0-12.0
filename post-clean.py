@@ -17,7 +17,7 @@ def _upgrade_modules(env):
     '''
     ir_module = env['ir.module.module']
     modules_to_uninstall = (
-        + MODULES_TO_UNINSTALL
+        MODULES_TO_UNINSTALL
         + MODULES_PENDING_MIGRATION
         + [i[0] for i in MODULES_TO_REPLACE]
     )
@@ -41,7 +41,7 @@ def _uninstall_modules(env):
     ir_module = env['ir.module.module']
 
     modules_to_uninstall = (
-        + MODULES_TO_UNINSTALL
+        MODULES_TO_UNINSTALL
         + MODULES_PENDING_MIGRATION
         + [i[0] for i in MODULES_TO_REPLACE]
     )
@@ -82,6 +82,27 @@ def _install_modules(env):
     # 'pos_terminal_payment_mode' in pos_payment_terminal module
     env.cr.execute(
         'update account_journal set pos_terminal_payment_mode=payment_mode;')
+    env.cr.execute(
+        "update ir_model_data set module='coop_account_check_deposit' where "
+        "module='account_check_deposit' and model='account.journal'"
+    )
+
+    # model name changed from product.category.print to product.print.category
+    env.cr.execute(
+    "alter table product_template add column category_print_id_bkp integer;")
+    env.cr.execute(
+    "update product_template set category_print_id_bkp=category_print_id;")
+    env.cr.execute(
+    "alter table product_category_print rename to product_print_category;")
+    env.cr.execute(
+    "alter sequence product_category_print_id_seq rename to "
+    "product_print_category_id_seq;")
+    env.cr.execute(
+    "update ir_model_data set model='product.print.category' where "
+    "model='product.category.print';")
+    env.cr.execute(
+    "update ir_model_data set name='ppc_demo_category' where "
+    "name='demo_category' and model='product.print.category';")
 
     ir_module.update_list()
 
@@ -95,8 +116,8 @@ def main(env):
     print('modules list updated...')
 
     _upgrade_modules(env)
-    _uninstall_modules(env)
     _install_modules(env)
+    _uninstall_modules(env)
 
     #  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
     #  'create.shifts.wizard' in action definition. module: coop_shift

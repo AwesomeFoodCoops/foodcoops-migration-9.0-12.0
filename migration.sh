@@ -72,6 +72,9 @@ if [[ $(echo "$CHECKPOINT <= 12.0" | bc -l) -eq 1 ]]; then
   psql -d $CURRDB -c "update queue_job set channel_bkp=channel;"
   psql -d $CURRDB -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
 
+#  psql -d $CURRDB -c "delete from res_groups_users_rel where uid = 7 and gid = 13;"
+#  psql -d $CURRDB -c "delete from res_groups_users_rel where uid = 27 and gid = 14;"
+
   echo 'Updating to 12.0..'
   /openupgrade/12.0/odoo-bin -c $CONFIG -d $CURRDB --addons-path=/openupgrade/12.0/odoo/addons,/openupgrade/12.0/addons --logfile=/proc/self/fd/1 --update all --stop-after-init
 

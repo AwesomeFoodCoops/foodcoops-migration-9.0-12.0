@@ -89,6 +89,10 @@ def _install_modules(env):
 
     # model name changed from product.category.print to product.print.category
     env.cr.execute(
+    "alter table product_template add column category_print_id_bkp integer;")
+    env.cr.execute(
+    "update product_template set category_print_id_bkp=category_print_id;")
+    env.cr.execute(
     "alter table product_category_print rename to product_print_category;")
     env.cr.execute(
     "alter sequence product_category_print_id_seq rename to "
@@ -96,6 +100,9 @@ def _install_modules(env):
     env.cr.execute(
     "update ir_model_data set model='product.print.category' where "
     "model='product.category.print';")
+    env.cr.execute(
+    "update ir_model_data set name='ppc_demo_category' where "
+    "name='demo_category' and model='product.print.category';")
 
     ir_module.update_list()
 

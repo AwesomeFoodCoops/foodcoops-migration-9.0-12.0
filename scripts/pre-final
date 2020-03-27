@@ -13,6 +13,7 @@ psql -c "delete from ir_ui_view where name = 'Product Template (form)' and arch_
 # coop_account_check_deposit
 # --------------------------
 psql -c "delete from ir_ui_view where name = 'account.journal.inherit.form' and arch_fs = 'account_check_deposit/views/account_journal_view.xml';"
+psql -c "update ir_model_data set module='coop_account_check_deposit' where module='account_check_deposit' and model='account.journal'"
 
 # coop_default_pricetag
 # ---------------------
@@ -40,6 +41,9 @@ psql -c "delete from ir_ui_view where arch_fs = 'coop_purchase/views/product_sup
 # inherited view(event_sale_product_template_form_inherit) of product.template removed from 12.0, module: coop_shift
 psql -c "delete from ir_ui_view where model = 'product.template' and arch_db ilike '%<label for=%event_ok%position=%attributes%';"
 psql -c "delete from ir_ui_view where model = 'res.partner' and arch_db ilike '%expr=%field[@name=''notify_email'']%';"
+#  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
+#  'create.shifts.wizard' in action definition. module: coop_shift
+psql -c "delete from ir_act_window where name = 'Create Shifts';"
 
 # coop_stock
 # ----------

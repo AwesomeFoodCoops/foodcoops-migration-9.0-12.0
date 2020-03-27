@@ -78,16 +78,11 @@ def _install_modules(env):
         else:
             print('Module not found: %s' % m)
 
-    # for account.jounal model: 'payment_mode' field is renamed to
-    # 'pos_terminal_payment_mode' in pos_payment_terminal module
-    env.cr.execute(
-        'update account_journal set pos_terminal_payment_mode=payment_mode;')
-    env.cr.execute(
-        "update ir_model_data set module='coop_account_check_deposit' where "
-        "module='account_check_deposit' and model='account.journal'"
-    )
-
+    # TODO move this to pre-final or pre-post scripts
     # model name changed from product.category.print to product.print.category
+    env.cr.execute(
+        "alter table product_template "
+        "add column category_print_id_bkp integer;")
     env.cr.execute(
         "alter table product_template "
         "add column category_print_id_bkp integer;")
@@ -106,9 +101,28 @@ def _install_modules(env):
     env.cr.execute(
         "update ir_model_data set name='ppc_demo_category' where "
         "name='demo_category' and model='product.print.category';")
+    env.cr.execute(
+        "update ir_model_data set name='ppc_demo_category' where "
+        "name='demo_category' and model='product.print.category';")
 
     ir_module.update_list()
 
+
+def _apply_configs(env):
+    '''
+    Applies configurations needed in 12.0
+    '''
+
+    # Pos configurations
+    pos_configs = env['pos.config'].search([])
+    for config in pos_configs:
+        if config.pricelist_id:
+            config.write(
+                {
+                    'use_pricelist': True,
+                    'available_pricelist_ids': [(4, config.pricelist_id.id)],
+                 }
+            )
 
 @click.command()
 @click_odoo.env_options(default_log_level='error')
@@ -121,23 +135,7 @@ def main(env):
     _upgrade_modules(env)
     _install_modules(env)
     _uninstall_modules(env)
-
-    #  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
-    #  'create.shifts.wizard' in action definition. module: coop_shift
-    env.cr.execute("delete from ir_act_window where name = 'Create Shifts';")
-
-    # Apply configurations
-    pos_configs = env['pos.config'].search([])
-    for config in pos_configs:
-        if config.pricelist_id:
-            config.write(
-                {
-                    'use_pricelist': True,
-                    'available_pricelist_ids': [(4, config.pricelist_id.id)],
-                 }
-            )
-
-    print('Post cleaning finished successfully!')
+    _apply_configs(env)
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ services:
             - ./sources/openupgrade-11.0:/home/odoo/src/odoo
         environment:
             PREVIOUS_DATABASE: mig-10.0
-            DATABASE: &dbname mig-$ODOO_VERSION
+            DATABASE: &dbname mig-11.0
             PGDATABASE: *dbname
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
@@ -28,7 +28,6 @@ services:
                 # Run pre-migration script
                 if [[ -f $$CUSTOM/scripts/pre-$$DATABASE ]]; then
                     echo "Running script: pre-$$DATABASE.."
-                    chmod a+x $$CUSTOM/scripts/pre-$$DATABASE
                     $$CUSTOM/scripts/pre-$$DATABASE
                 fi
 

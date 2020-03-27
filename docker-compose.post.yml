@@ -28,7 +28,6 @@ services:
                 # Run pre-migration script
                 if [[ -f $$CUSTOM/scripts/pre-$$DATABASE ]]; then
                     echo "Running script: pre-$$DATABASE.."
-                    chmod a+x $$CUSTOM/scripts/pre-$$DATABASE
                     $$CUSTOM/scripts/pre-$$DATABASE
                 fi
                 # Serve the final database backup

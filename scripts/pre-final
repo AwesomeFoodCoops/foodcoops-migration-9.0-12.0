@@ -1,0 +1,88 @@
+#!/bin/bash
+set -e
+
+# Post Clean
+echo "Executing post-clean.py.."
+$CUSTOM/scripts/pre-$DATABASE-clean.py
+
+# Account Asset Management
+# ------------------------
+psql -c "delete from ir_ui_view where name = 'account.invoice.supplier.form' and arch_fs='account_asset/views/account_invoice_views.xml';"
+psql -c "delete from ir_ui_view where name = 'Product Template (form)' and arch_fs='account_asset/views/product_views.xml';"
+
+# coop_account_check_deposit
+# --------------------------
+psql -c "delete from ir_ui_view where name = 'account.journal.inherit.form' and arch_fs = 'account_check_deposit/views/account_journal_view.xml';"
+
+# coop_default_pricetag
+# ---------------------
+# module: coop_default_pricetag. Added records in ir_model_data which are deleted due to uninstalling of louve_custom_product module
+psql -c "insert into ir_model_data (id, create_uid, create_date, write_uid, write_date, noupdate, name, date_init, date_update, module, model, res_id) VALUES (nextval('ir_model_data_id_seq'), 1, (now() at time zone 'UTC'), 1, (now() at time zone 'UTC'), 't', 'decimal_product_attribute_volume', (now() at time zone 'UTC'), (now() at time zone 'UTC'), 'coop_default_pricetag', 'decimal.precision', 7);"
+
+# coop_inventory
+# --------------
+# report id renamed from 'report_inventory_adjust' to 'report_inventory' in coop_inventory module.
+psql -c "delete from ir_ui_view where name = 'report_inventory_adjust';"
+#'report_inventory_louve' template not needed in coop_inventory module
+psql -c "delete from ir_ui_view where name = 'report_inventory_louve';"
+
+# coop_purchase
+# -------------
+# modeule: coop_purchase. views removed in 12.0
+psql -c "delete from ir_ui_view where name = 'report_purchaseorder_louve';"
+psql -c "delete from ir_ui_view where arch_fs = 'coop_purchase/views/product_template_view.xml';"
+psql -c "delete from ir_ui_view where name = 'report_purchasequotation_louve';"
+psql -c "delete from ir_ui_view where name = 'invoice.supplier.form.inherit' and model = 'account.invoice' and arch_fs = 'coop_purchase/views/purchase_view.xml';"
+psql -c "delete from ir_ui_view where arch_fs = 'coop_purchase/views/product_supplierinfo_view.xml';"
+
+# coop_shift
+# ----------
+# inherited view(event_sale_product_template_form_inherit) of product.template removed from 12.0, module: coop_shift
+psql -c "delete from ir_ui_view where model = 'product.template' and arch_db ilike '%<label for=%event_ok%position=%attributes%';"
+psql -c "delete from ir_ui_view where model = 'res.partner' and arch_db ilike '%expr=%field[@name=''notify_email'']%';"
+
+# coop_stock
+# ----------
+# pack_operation_product_ids removed from stock.picking models, coop_stock module
+psql -c "delete from ir_ui_view where arch_db ilike '%field[@name=''pack_operation_product_ids'']%'"
+
+
+# purchase_package_qty
+# --------------------
+# report id renamed from 'report_inventory_package' to 'report_inventory' in purchase_package_qty module.
+psql -c "delete from ir_ui_view where name = 'report_inventory_package';"
+
+
+# product_print_category
+# ----------------------
+val=$(psql -c "select max(id) from product_print_category;")
+seq="${val:15:1}"
+psql -c "ALTER SEQUENCE product_print_category_id_seq RESTART WITH $seq"
+
+psql -c "alter table ir_model_fields_product_print_category_rel drop constraint ir_model_fields_product_print_category_rel_category_id_fkey;"
+psql -c "alter table ir_model_fields_product_print_category_rel add CONSTRAINT ir_model_fields_product_print_category_rel_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.product_print_category (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE;"
+psql -c "update product_template set print_category_id=category_print_id_bkp;"
+
+# purchase_discount
+# -----------------
+# Change in inherited form view of res.partner in purchase_discount module
+psql -c "delete from ir_ui_view where name = 'res.partner.form.inherit' and model='res.partner';"
+
+# pos_access_rights
+# -----------------
+# res.groups xml IDs are changed in pos_access_right module
+psql -c "update ir_model_data set name = 'group_negative_qty' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_negative_qty';"
+psql -c "update ir_model_data set name = 'group_discount' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_discount';"
+psql -c "update ir_model_data set name = 'group_change_unit_price' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_change_unit_price';"
+psql -c "update ir_model_data set name = 'group_multi_order' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_multi_order';"
+psql -c "update ir_model_data set name = 'group_delete_order' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_delete_order';"
+
+# pos_payment_terminal
+# --------------------
+# for account.jounal model: 'payment_mode' field is renamed to 'pos_terminal_payment_mode' in pos_payment_terminal module
+psql -c "delete from ir_ui_view where name = 'pos.payment.terminal.journal.form'"
+
+# field name changed in queue.job model from channel to channel_method_name;
+psql -c "ALTER TABLE queue_job ADD COLUMN channel_bkp character varying COLLATE pg_catalog.\"default\";"
+psql -c "update queue_job set channel_bkp=channel;"
+psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"

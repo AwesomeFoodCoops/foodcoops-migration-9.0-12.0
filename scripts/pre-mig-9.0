@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+echo "Running pre-mig-9.0-clean.."
+$CUSTOM/scripts/pre-mig-9.0-clean.py

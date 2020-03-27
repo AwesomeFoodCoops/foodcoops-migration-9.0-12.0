@@ -2,6 +2,9 @@
 
 To migrate a database from 9.0 to 12.0, using openupgrade.
 
+# Setup
+
+## 1. Download openupgrade and all repositories required
 
 First step is downloading openupgrade and all the required repositories.
 
@@ -10,22 +13,35 @@ First step is downloading openupgrade and all the required repositories.
 By executing this command, openupgrade versions 9.0, 10.0, 11.0 and 12.0 will be downloaded.
 To know more about Openupgrade project, follow this link: https://github.com/OCA/OpenUpgrade
 
-Please set the addons_path in odoo.conf and post_clean.conf files according to the local system.
+Also all the required repositories for 12.0 will also be downloaded.
 
-Now, run the following command to start the migration of a database.
+## 2. Log in to docker.hub
 
-`/bin/bash migration.sh database_name_to_migrate`
-
-This command will start the migration. It will go through the following stages:
-* pre-clean the database
-* update the database to 10.0
-* update the database to 11.0
-* run the pre-migrate scripts put in pre_migrate folder
-* update the database to 12.0
-* post-clean the database
-* run the post-migrate scripts put in post_migrate folder
+Your user needs access to druidoo's repositories and have access to odoo-saas.
+This step is only necessary if you're not logged in already.
 
 
-**TODO**
+`docker login -u YOU_USERNAME -p YOUR_PASSWORD`
 
-Make the addons_path set in odoo.conf and post_clean.conf files to system independent using git-aggregator.
+# Migrate
+
+## 1. Load your database
+
+Start the container:
+
+`docker-compose -f docker-compose.pre.yml up`
+
+Then access https://localhost/8069 on your browser, and upload your database.
+**IMPORTANT:** Database name has to be exactly: `migrate`.
+
+
+Then `CTRL+C` to stop the container.
+
+## 2. Migrate base modules to 12.0
+
+`./migrate-all.sh`
+
+## 3. Get your migrated database
+
+It'll be located in `backups/final.zip`
+

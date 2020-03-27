@@ -1,0 +1,37 @@
+version: '2.4'
+services:
+    db:
+        extends:
+            file: docker-compose.common.yml
+            service: db
+    odoo:
+        extends:
+            file: docker-compose.common.yml
+            service: odoo
+
+        image: druidoo/odoo:12.0
+        depends_on:
+            - db
+        volumes:
+            - ./sources/openupgrade-12.0:/home/odoo/src/odoo
+        environment:
+            PREVIOUS_DATABASE: mig-11.0
+            DATABASE: &dbname mig-$ODOO_VERSION
+            PGDATABASE: *dbname
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                echo "Replacing installed odoo with openupgrade.."
+                pip install --user --no-cache-dir $$SOURCES/odoo
+                echo "Creating database backup: $$DATABASE"
+                click-odoo-dropdb --if-exists $$DATABASE
+                click-odoo-copydb -f $$PREVIOUS_DATABASE $$DATABASE
+                # Run pre-migration script
+                if [[ -f $$CUSTOM/scripts/pre-$$DATABASE ]]; then
+                    echo "Running script: pre-$$DATABASE.."
+                    chmod a+x $$CUSTOM/scripts/pre-$$DATABASE
+                    $$CUSTOM/scripts/pre-$$DATABASE
+                fi
+
+volumes:
+    db:
+    filestore:

@@ -2,7 +2,7 @@
 set -e
 
 # Post Clean
-echo "Executing post-clean.py.."
+echo "Executing pre-$DATABASE-clean.py.."
 $CUSTOM/scripts/pre-$DATABASE-clean.py
 
 # Account Asset Management

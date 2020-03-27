@@ -17,6 +17,8 @@ def main(env):
         + [i[0] for i in MODULES_TO_REPLACE]
     )
 
+    modules_not_uninstalled = []
+
     for module in modules_to_uninstall:
         # Skip modules that are depended by others,
         # because that might trigger a chain uninstall,
@@ -30,6 +32,7 @@ def main(env):
                 'Skipping module uninstall: %s, '
                 'because it\'s dependend by: %s'
                 ) % (module, depended_by.mapped('name')))
+            modules_not_uninstalled.append(module)
             continue
 
         module_id = env['ir.module.module'].search([('name', '=', module)])
@@ -45,6 +48,21 @@ def main(env):
         # Uninstall module
         print('Uninstalling module: %s..' % module)
         module_id.button_immediate_uninstall()
+
+    if modules_not_uninstalled:
+        print('Removing views of modules we want to uninstall')
+        print(modules_not_uninstalled)
+        # Remove views of modules we'll end up uninstalling
+        model_data_ids = env['ir.model.data'].search([
+            ('module', 'in', modules_not_uninstalled),
+            ('model', '=', 'ir.ui.view')])
+        for model_data in model_data_ids:
+            view_id = env['ir.ui.view'].browse(model_data.res_id)
+            try:
+                view.unlink()
+                model_data.unlink()
+            except Exception as e:
+                pass
 
     print('Pre cleaning finished successfully!')
 

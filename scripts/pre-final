@@ -7,8 +7,9 @@ $CUSTOM/scripts/pre-$DATABASE-clean.py
 
 # Account Asset Management
 # ------------------------
-psql -c "delete from ir_ui_view where name = 'account.invoice.supplier.form' and arch_fs='account_asset/views/account_invoice_views.xml';"
-psql -c "delete from ir_ui_view where name = 'Product Template (form)' and arch_fs='account_asset/views/product_views.xml';"
+# Remove old account_asset module views
+psql -c "DELETE FROM ir_ui_view WHERE arch_fs ILIKE 'account_asset/%':"
+psql -C "DELETE FROM ir_model_data WHERE module = 'account_asset' AND model = 'ir.ui.view';"
 
 # coop_account_check_deposit
 # --------------------------

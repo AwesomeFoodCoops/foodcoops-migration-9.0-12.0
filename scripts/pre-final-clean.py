@@ -71,13 +71,17 @@ def _install_modules(env):
         + [i[1] for i in MODULES_TO_REPLACE]
     )
 
-    for m in modules_to_install:
-        print('Installing module: %s..' % m)
-        module_id = ir_module.search([('name', '=', m)])
-        if module_id:
-            module_id.button_immediate_install()
-        else:
-            print('Module not found: %s' % m)
+    module_ids = env['ir.module.module'].search([
+        ('name', 'in', modules_to_install)])
+
+    missing_modules = Set(modules_to_install) - Set(module_ids.mapped('name'))
+    if missing_modules:
+        _logger.error(
+            'Trying to install modules that are missing: '
+            '%s' % missing_modules)
+
+    _logger.info('Installing modules: %s' % module_ids.mapped('name'))
+    module_ids.button_immediate_install()
 
 
 def _apply_post_fixes(env):

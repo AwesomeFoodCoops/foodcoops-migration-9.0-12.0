@@ -28,6 +28,7 @@ MODULES_TO_UNINSTALL = [
     'pos_product_barcodes',  # Merged with coop_point_of_sale
     'date_search_extended',  # Merged in coop_account and coop_point_of_sale
     'account_reconcile_writeoff_improve',  # Merged into coop_account
+    'account_bank_reconciliation_rule',  # Merged into account_bank_statement_reconcile_option
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
 
@@ -63,8 +64,6 @@ MODULES_TO_REPLACE = [
 
 MODULES_PENDING_MIGRATION = [
     'account_bank_statement_import_caisse_epargne',
-    'account_bank_statement_reconcile_option',
-    'account_bank_reconciliation_rule',
     'account_payment_select_account',
     'account_product_fiscal_classification',
     'base_import_security_group',

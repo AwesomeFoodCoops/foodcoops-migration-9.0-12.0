@@ -4,6 +4,9 @@ import click
 import click_odoo
 from config import *
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 def _upgrade_modules(env):
     '''
@@ -22,11 +25,11 @@ def _upgrade_modules(env):
         + [i[0] for i in MODULES_TO_REPLACE]
     )
     modules = ir_module.search([
-        ('state', 'in', ['installed', 'to upgrade']),
+        ('state', 'in', ['to upgrade']),
         ('name', 'not in', modules_to_uninstall)])
     if modules:
-        print('Updating modules: %s', modules.mapped('name'))
-        modules.button_upgrade()
+        _logger.info('Upgrading modules: %s', modules.mapped('name'))
+        modules.button_immediate_upgrade()
 
 
 def _uninstall_modules(env):
@@ -46,18 +49,16 @@ def _uninstall_modules(env):
         + [i[0] for i in MODULES_TO_REPLACE]
     )
 
-    for module in modules_to_uninstall:
-        module_id = ir_module.search([('name', '=', module)])
-        if not module_id:
-            print('Module not found: %s' % module)
-            continue
-        # Skip modules that are not installed
-        if module_id.state not in ['installed', 'to upgrade', 'to remove']:
-            print('Skipping module uninstall: %s. Not installed.' % module)
-            continue
-        # Uninstall module
-        print('Uninstalling module: %s..' % module)
-        module_id.button_immediate_uninstall()
+    module_ids = ir_module.search([
+        ('name', 'in', modules_to_uninstall),
+        ('state', 'in', ['installed', 'to upgrade', 'to remove']),
+    ])
+
+    # Force installed state
+    # Because odoo won't uninstall modules in 'to upgrade' state
+    module_ids.write({'state': 'installed'})
+    _logger.info('Uninstalling modules: %s' % module_ids.mapped('name'))
+    module_ids.button_immediate_uninstall()
 
 
 def _install_modules(env):
@@ -74,38 +75,21 @@ def _install_modules(env):
         print('Installing module: %s..' % m)
         module_id = ir_module.search([('name', '=', m)])
         if module_id:
-            module_id.button_install()
+            module_id.button_immediate_install()
         else:
             print('Module not found: %s' % m)
 
-    # TODO move this to pre-final or pre-post scripts
-    # model name changed from product.category.print to product.print.category
-    env.cr.execute(
-        "alter table product_template "
-        "add column category_print_id_bkp integer;")
-    env.cr.execute(
-        "alter table product_template "
-        "add column category_print_id_bkp integer;")
-    env.cr.execute(
-        "update product_template "
-        "set category_print_id_bkp=category_print_id;")
-    env.cr.execute(
-        "alter table product_category_print "
-        "rename to product_print_category;")
-    env.cr.execute(
-        "alter sequence product_category_print_id_seq rename to "
-        "product_print_category_id_seq;")
-    env.cr.execute(
-        "update ir_model_data set model='product.print.category' where "
-        "model='product.category.print';")
-    env.cr.execute(
-        "update ir_model_data set name='ppc_demo_category' where "
-        "name='demo_category' and model='product.print.category';")
-    env.cr.execute(
-        "update ir_model_data set name='ppc_demo_category' where "
-        "name='demo_category' and model='product.print.category';")
 
-    ir_module.update_list()
+def _apply_post_fixes(env):
+    '''
+    Post migration required by some modules
+    TODO: Move this to a separate file
+    '''
+
+    # pos_payment_terminal: field renamed
+    env.cr.execute("""
+        UPDATE account_journal SET pos_terminal_payment_mode = payment_mode;
+    """)
 
 
 def _apply_configs(env):
@@ -124,18 +108,92 @@ def _apply_configs(env):
                  }
             )
 
+
+def _deactivate_custom_views(env):
+    '''
+    Gets views that are not linked to any
+    installed module (no ir.model.data)
+    '''
+
+    ir_model_data = env['ir.model.data'].search([
+        ('model', '=', 'ir.ui.view')])
+    view_ids = env['ir.ui.view'].search([
+        ('id', 'not in', ir_model_data.mapped('res_id'))])
+    for view in view_ids:
+        _logger.info('Deactivating custom view (%s): %s' % (
+            view.type, view.name))
+        view.write({
+            'active': False,
+            'name': '%s | Deactivated because of migration' % view.name,
+        })
+
+
+def _deactivate_orphan_views(env):
+    '''
+    Orphan views are views of uninstalled modules
+    For some reason OpenUpgrade keept them.
+    '''
+    uninstalled_modules = env['ir.module.module'].search([
+        ('state', 'not in', ['installed', 'to upgrade'])])
+    ir_model_data = env['ir.model.data'].search([
+        ('module', 'in', uninstalled_modules.mapped('name')),
+        ('model', '=', 'ir.ui.view')])
+    view_ids = env['ir.ui.view'].search([
+        ('id', 'in', ir_model_data.mapped('res_id'))])
+    for view in view_ids:
+        _logger.info('Deactivating orphan view (%s): %s' % (
+            view.type, view.name))
+        view.write({
+            'active': False,
+            'name': '%s | Deactivated orphan view' % view.name,
+        })
+
+
+def _report_modules_states(env):
+    # Modules to install
+    modules = env['ir.module.module'].search([
+        ('state', '=', 'to install')])
+    if modules:
+        _logger.warning(
+            '\n\nModules to install:\n%s' % '\n'.join(modules.mapped('name')))
+    # Modules to update
+    modules = env['ir.module.module'].search([
+        ('state', '=', 'to upgrade')])
+    if modules:
+        _logger.warning(
+            '\n\nModules to update:\n%s' % '\n'.join(modules.mapped('name')))
+    # Modules to remove
+    modules = env['ir.module.module'].search([
+        ('state', '=', 'to remove')])
+    if modules:
+        _logger.warning(
+            '\n\nModules to remove:\n%s' % '\n'.join(modules.mapped('name')))
+
+
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
-    print('Starting post clean...')
+    _logger.info('Starting post clean..')
     ir_module = env['ir.module.module']
     ir_module.update_list()
-    print('modules list updated...')
+    _logger.info('Module list updated...')
+
+    # Already done in pre-9.0 so probably not needed here
+    _deactivate_custom_views(env)
+    _deactivate_orphan_views(env)
+
+    # Debug
+    _report_modules_states(env)
 
     _upgrade_modules(env)
-    _install_modules(env)
     _uninstall_modules(env)
+    _install_modules(env)
+
+    _apply_post_fixes(env)
     _apply_configs(env)
+
+    # Debug
+    _report_modules_states(env)
 
 
 if __name__ == '__main__':

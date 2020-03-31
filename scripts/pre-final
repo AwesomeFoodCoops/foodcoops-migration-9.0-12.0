@@ -1,15 +1,10 @@
 #!/bin/bash
 set -e
 
-# Post Clean
-echo "Executing pre-$DATABASE-clean.py.."
-$CUSTOM/scripts/pre-$DATABASE-clean.py
-
 # Account Asset Management
 # ------------------------
-# Remove old account_asset module views
-psql -c "DELETE FROM ir_ui_view WHERE arch_fs ILIKE 'account_asset/%':"
-psql -C "DELETE FROM ir_model_data WHERE module = 'account_asset' AND model = 'ir.ui.view';"
+# Deactivate old account_asset module views
+psql -c "UPDATE ir_ui_view SET active = False WHERE arch_fs ILIKE 'account_asset/%'"
 
 # coop_account_check_deposit
 # --------------------------
@@ -58,15 +53,15 @@ psql -c "delete from ir_ui_view where arch_db ilike '%field[@name=''pack_operati
 psql -c "delete from ir_ui_view where name = 'report_inventory_package';"
 
 
-# product_print_category
-# ----------------------
-val=$(psql -c "select max(id) from product_print_category;")
-seq="${val:15:1}"
-psql -c "ALTER SEQUENCE product_print_category_id_seq RESTART WITH $seq"
+# Migrate product print category
+psql -c "ALTER TABLE product_template ADD COLUMN category_print_id_bkp integer"
+psql -c "UPDATE product_template SET category_print_id_bkp = category_print_id"
+psql -c "ALTER TABLE product_category_print RENAME TO product_print_category"
+psql -c "ALTER SEQUENCE product_category_print_id_seq RENAME TO product_print_category_id_seq"
+psql -c "UPDATE ir_model_data SET model = 'product.print.category' WHERE model='product.category.print'"
+psql -c "UPDATE ir_model_data SET name = 'ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
+psql -c "UPDATE ir_model_data SET name='ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
 
-psql -c "alter table ir_model_fields_product_print_category_rel drop constraint ir_model_fields_product_print_category_rel_category_id_fkey;"
-psql -c "alter table ir_model_fields_product_print_category_rel add CONSTRAINT ir_model_fields_product_print_category_rel_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.product_print_category (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE;"
-psql -c "update product_template set print_category_id=category_print_id_bkp;"
 
 # purchase_discount
 # -----------------
@@ -87,7 +82,11 @@ psql -c "update ir_model_data set name = 'group_delete_order' where model='res.g
 # for account.jounal model: 'payment_mode' field is renamed to 'pos_terminal_payment_mode' in pos_payment_terminal module
 psql -c "delete from ir_ui_view where name = 'pos.payment.terminal.journal.form'"
 
+# queue_jobs
 # field name changed in queue.job model from channel to channel_method_name;
-psql -c "ALTER TABLE queue_job ADD COLUMN channel_bkp character varying COLLATE pg_catalog.\"default\";"
-psql -c "update queue_job set channel_bkp=channel;"
 psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
+
+
+# Post Clean
+echo "Executing pre-$DATABASE-clean.py.."
+$CUSTOM/scripts/pre-$DATABASE-clean.py

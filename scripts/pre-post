@@ -1,7 +1,0 @@
-#!/bin/bash
-set -e
-
-# pos_payment_terminal
-# --------------------
-# Field renamed
-psql -c "UPDATE account_journal SET pos_terminal_paymend_mode = payment_mode;"

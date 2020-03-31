@@ -20,6 +20,7 @@ services:
             PGDATABASE: *dbname
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
+                set -e
                 echo "Replacing installed odoo with openupgrade.."
                 pip install --user --no-cache-dir $$SOURCES/odoo
                 # Always use an updated openugpradelib version

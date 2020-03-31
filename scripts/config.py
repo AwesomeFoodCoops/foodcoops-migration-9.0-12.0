@@ -31,19 +31,14 @@ MODULES_TO_UNINSTALL = [
     'account_bank_reconciliation_rule',  # Merged into account_bank_statement_reconcile_option
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
-
-    # Other technical modules
-    # TODO: add them to the repositories, we need them
-    'saas_client',
-    'server_mode',
-    'server_mode_fetchmail',
-    'server_mode_mail',
 ]
 
 MODULES_TO_INSTALL = [
     'account_bank_statement_reconciliation_report',
     'coop_default_pricetag',
     'coop_account_check_deposit',
+    # Only if l10n_fr - TODO?
+    'l10n_fr_fec_group_sale_purchase',
 ]
 
 MODULES_TO_REPLACE = [
@@ -55,6 +50,7 @@ MODULES_TO_REPLACE = [
     ('email_pos_receipt', 'pos_ticket_send_by_mail'),
     ('account_bank_statement_summary', 'account_bank_statement_reconciliation_report'),
     ('pos_session_summary', 'pos_report_session_summary'),
+    ('l10n_fr_fec_custom', 'l10n_fr_fec_background'),
     # Modules that will be replaced, but are awaiting improvement PR:
     ('stock_inventory_xlsx', 'stock_inventory_valuation_report'),
     # Modules that need data migration

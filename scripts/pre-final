@@ -40,6 +40,8 @@ psql -c "delete from ir_ui_view where model = 'res.partner' and arch_db ilike '%
 #  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
 #  'create.shifts.wizard' in action definition. module: coop_shift
 psql -c "delete from ir_act_window where name = 'Create Shifts';"
+psql -c "DELETE FROM ir_act_window WHERE src_model = 'create.shifts.wizard'"
+
 
 # coop_stock
 # ----------

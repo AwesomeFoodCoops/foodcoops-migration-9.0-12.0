@@ -74,7 +74,7 @@ def _install_modules(env):
     module_ids = env['ir.module.module'].search([
         ('name', 'in', modules_to_install)])
 
-    missing_modules = Set(modules_to_install) - Set(module_ids.mapped('name'))
+    missing_modules = set(modules_to_install) - set(module_ids.mapped('name'))
     if missing_modules:
         _logger.error(
             'Trying to install modules that are missing: '

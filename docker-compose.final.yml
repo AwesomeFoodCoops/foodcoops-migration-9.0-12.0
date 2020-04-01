@@ -9,12 +9,11 @@ services:
             file: docker-compose.common.yml
             service: odoo
 
-        image: druidoo/odoo:12.0
+        image: druidoo/openupgrade:12.0
         command: exit
         depends_on:
             - db
         volumes:
-            - ./sources/openupgrade-12.0:/home/odoo/src/odoo
             - ./sources/repositories:/home/odoo/src/repositories
             - ./backups:/home/odoo/custom/backups
         environment:
@@ -24,10 +23,6 @@ services:
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                echo "Replacing installed odoo with openupgrade.."
-                pip install --user --no-cache-dir $$SOURCES/odoo
-                # Always use an updated openugpradelib version
-                pip install --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
                 # Installing requirements.txt
                 for repo in /home/odoo/src/repositories/* ; do
                     if [ -f "$$repo/requirements.txt" ]; then

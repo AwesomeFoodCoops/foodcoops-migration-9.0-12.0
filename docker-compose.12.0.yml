@@ -9,11 +9,9 @@ services:
             file: docker-compose.common.yml
             service: odoo
 
-        image: druidoo/odoo:12.0
+        image: druidoo/openupgrade:12.0
         depends_on:
             - db
-        volumes:
-            - ./sources/openupgrade-12.0:/home/odoo/src/odoo
         environment:
             PREVIOUS_DATABASE: mig-11.0
             DATABASE: &dbname mig-12.0
@@ -21,10 +19,6 @@ services:
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                echo "Replacing installed odoo with openupgrade.."
-                pip install --user --no-cache-dir $$SOURCES/odoo
-                # Always use an updated openugpradelib version
-                pip install --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
                 echo "Creating database backup: $$DATABASE"
                 click-odoo-dropdb --if-exists $$DATABASE
                 click-odoo-copydb -f $$PREVIOUS_DATABASE $$DATABASE

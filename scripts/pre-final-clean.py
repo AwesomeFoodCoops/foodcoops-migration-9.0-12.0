@@ -168,7 +168,7 @@ def _apply_post_fixes(env):
     '''
 
     # Fix modules left in inconsistent states
-    module_ids = ir_module.search([
+    module_ids = env['ir.module.module'].search([
         ('state', 'in', ['to upgrade', 'to remove'])])
     module_ids.write({'state': 'installed'})
 

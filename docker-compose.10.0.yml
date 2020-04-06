@@ -1,0 +1,33 @@
+version: '2.4'
+services:
+    db:
+        extends:
+            file: docker-compose.common.yml
+            service: db
+    odoo:
+        extends:
+            file: docker-compose.common.yml
+            service: odoo
+
+        image: druidoo/openupgrade:10.0
+        depends_on:
+            - db
+        environment:
+            PREVIOUS_DATABASE: mig-9.0
+            DATABASE: &dbname mig-10.0
+            PGDATABASE: *dbname
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                set -e
+                echo "Creating database backup: $$DATABASE"
+                click-odoo-dropdb --if-exists $$DATABASE
+                click-odoo-copydb -f $$PREVIOUS_DATABASE $$DATABASE
+                # Run pre-migration script
+                if [[ -f $$CUSTOM/scripts/pre-$$DATABASE ]]; then
+                    echo "Running script: pre-$$DATABASE.."
+                    $$CUSTOM/scripts/pre-$$DATABASE
+                fi
+
+volumes:
+    db:
+    filestore:

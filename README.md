@@ -1,32 +1,42 @@
-# foodcoops-migration-9.0-12.0
 **Foodcoops Database Migration scripts from 9.0 to 12.0**
 
-To migrate a database from 9.0 to 12.0, openupgrade needs to be downloaded.
+To migrate a database from 9.0 to 12.0, using openupgrade.
 
-For that run the following command in the terminal:
+# Setup
 
-`/bin/bash get_openupgrade.sh`
+## 1. Download required repositories
 
-By executing this command, openupgrade versions 9.0, 10.0, 11.0 and 12.0 will be downloaded.
+First step is downloading all the required repositories.
 
-To know more about Openupgrade project, follow this link: https://github.com/OCA/OpenUpgrade
+`./setup.py`
 
-Please set the addons_path in odoo.conf and post_clean.conf files according to the local system.
+## 2. Log in to docker.hub
 
-Now, run the following command to start the migration of a database.
-
-`/bin/bash migration.sh database_name_to_migrate`
-
-This command will start the migration. It will go through the following stages:
-* pre-clean the database
-* update the database to 10.0
-* update the database to 11.0
-* run the pre-migrate scripts put in pre_migrate folder
-* update the database to 12.0
-* post-clean the database
-* run the post-migrate scripts put in post_migrate folder
+Your user needs access to druidoo's repositories and have access to odoo-saas.
+This step is only necessary if you're not logged in already.
 
 
-**TODO**
+`docker login -u YOU_USERNAME -p YOUR_PASSWORD`
 
-Make the addons_path set in odoo.conf and post_clean.conf files to system independent using git-aggregator.
+# Migrate
+
+## 1. Load your database
+
+Start the container:
+
+`docker-compose -f docker-compose.load.yml up`
+
+Then access https://localhost/8069 on your browser, and upload your database.
+**IMPORTANT:** Database name has to be exactly: `migrate`.
+
+
+Then `CTRL+C` to stop the container.
+
+## 2. Migrate base modules to 12.0
+
+`./migrate-all.sh`
+
+## 3. Get your migrated database
+
+It'll be located in `backups/final.zip`
+

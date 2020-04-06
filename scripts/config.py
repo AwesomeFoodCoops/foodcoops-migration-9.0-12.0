@@ -20,6 +20,8 @@ MODULES_TO_UNINSTALL = [
     'web_readonly_bypass',
     'smile_base',
     'smile_upgrade',
+    'server_mode_mail',
+    'server_mode_fetchmail',
     # Modules that have been merged into other modules:
     'louve_custom_account',
     'louve_custom_product',
@@ -28,21 +30,20 @@ MODULES_TO_UNINSTALL = [
     'pos_product_barcodes',  # Merged with coop_point_of_sale
     'date_search_extended',  # Merged in coop_account and coop_point_of_sale
     'account_reconcile_writeoff_improve',  # Merged into coop_account
+    'account_bank_reconciliation_rule',  # Merged into account_bank_statement_reconcile_option
+    'purchase_operation_adjust',  # Merged in product_package_qty
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
-
-    # Other technical modules
-    # TODO: add them to the repositories, we need them
-    'saas_client',
-    'server_mode',
-    'server_mode_fetchmail',
-    'server_mode_mail',
 ]
 
 MODULES_TO_INSTALL = [
     'account_bank_statement_reconciliation_report',
     'coop_default_pricetag',
     'coop_account_check_deposit',
+    # We want these extra modules:
+    'web_m2x_options',
+    # Only if l10n_fr - TODO?
+    'l10n_fr_fec_group_sale_purchase',
 ]
 
 MODULES_TO_REPLACE = [
@@ -54,6 +55,7 @@ MODULES_TO_REPLACE = [
     ('email_pos_receipt', 'pos_ticket_send_by_mail'),
     ('account_bank_statement_summary', 'account_bank_statement_reconciliation_report'),
     ('pos_session_summary', 'pos_report_session_summary'),
+    ('l10n_fr_fec_custom', 'l10n_fr_fec_background'),
     # Modules that will be replaced, but are awaiting improvement PR:
     ('stock_inventory_xlsx', 'stock_inventory_valuation_report'),
     # Modules that need data migration
@@ -62,16 +64,10 @@ MODULES_TO_REPLACE = [
 ]
 
 MODULES_PENDING_MIGRATION = [
-    'account_bank_statement_import_caisse_epargne',
-    'account_bank_statement_reconcile_option',
-    'account_bank_reconciliation_rule',
-    'account_payment_select_account',
     'account_product_fiscal_classification',
     'base_import_security_group',
     'pos_automatic_cashdrawer',
     'pos_payment_terminal_return',
-    'product_to_scale_bizerba',
-    'purchase_operation_adjust',
     'l10n_fr_pos_cert_base',
     'web_widget_image_webcam',
 ]

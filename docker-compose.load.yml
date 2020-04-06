@@ -1,0 +1,24 @@
+version: '2.4'
+services:
+    db:
+        extends:
+            file: docker-compose.common.yml
+            service: db
+    odoo:
+        extends:
+            file: docker-compose.common.yml
+            service: odoo
+        depends_on:
+            - db
+        ports:
+            - "8069:8069"
+
+        image: druidoo/openupgrade:9.0
+        command: odoo
+        environment:
+            DATABASE: &dbname migrate
+            PGDATABASE: *dbname
+
+volumes:
+    db:
+    filestore:

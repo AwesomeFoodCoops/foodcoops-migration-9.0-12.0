@@ -1,0 +1,36 @@
+version: '2.4'
+services:
+    db:
+        extends:
+            file: docker-compose.common.yml
+            service: db
+    odoo:
+        extends:
+            file: docker-compose.common.yml
+            service: odoo
+
+        image: druidoo/odoo:12.0
+        command: odoo
+        depends_on:
+            - db
+        ports:
+            - "8069:8069"
+        volumes:
+            - ./sources/repositories:/home/odoo/src/repositories
+        environment:
+            DATABASE: &dbname final
+            PGDATABASE: *dbname
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                set -e
+                # Installing requirements.txt
+                for repo in /home/odoo/src/repositories/* ; do
+                    if [ -f "$$repo/requirements.txt" ]; then
+                        echo "Installing $$repo/requirements.txt.."
+                        pip install --user -r $$repo/requirements.txt
+                    fi
+                done
+
+volumes:
+    db:
+    filestore:

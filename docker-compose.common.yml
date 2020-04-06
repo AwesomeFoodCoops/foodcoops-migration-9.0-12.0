@@ -1,0 +1,33 @@
+version: '2.4'
+services:
+
+    db:
+        image: postgres:10.6
+        environment:
+            POSTGRES_USER: odoo
+            POSTGRES_PASSWORD: odoo
+            POSTGRES_DB: postgres
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - db:/var/lib/postgresql/data/pgdata
+
+    odoo:
+        image: druidoo/openupgrade:9.0
+        command: -- --stop-after-init --update=all
+        tty: true
+        stdin_open: true
+
+        environment:
+            WAIT_PG: 'true'
+            LIST_DB: 'true'
+            WORKERS: 0
+            PROXY_MODE: 'false'
+            FIXDBS: 'false'
+
+        volumes:
+            - ./scripts:/home/odoo/custom/scripts
+            - filestore:/home/odoo/data
+
+volumes:
+    db:
+    filestore:

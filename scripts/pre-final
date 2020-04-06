@@ -1,0 +1,95 @@
+#!/bin/bash
+set -e
+
+# FIX ir_model_data pointing to old ir.values
+psql -c "DELETE FROM ir_model_data WHERE model = 'ir.values'"
+
+# Account Asset Management
+# ------------------------
+# Deactivate old account_asset module views
+psql -c "UPDATE ir_ui_view SET active = False WHERE arch_fs ILIKE 'account_asset/%'"
+
+# coop_account_check_deposit
+# --------------------------
+psql -c "delete from ir_ui_view where name = 'account.journal.inherit.form' and arch_fs = 'account_check_deposit/views/account_journal_view.xml';"
+psql -c "update ir_model_data set module='coop_account_check_deposit' where module='account_check_deposit' and model='account.journal'"
+
+# coop_default_pricetag
+# ---------------------
+# module: coop_default_pricetag. Added records in ir_model_data which are deleted due to uninstalling of louve_custom_product module
+psql -c "insert into ir_model_data (id, create_uid, create_date, write_uid, write_date, noupdate, name, date_init, date_update, module, model, res_id) VALUES (nextval('ir_model_data_id_seq'), 1, (now() at time zone 'UTC'), 1, (now() at time zone 'UTC'), 't', 'decimal_product_attribute_volume', (now() at time zone 'UTC'), (now() at time zone 'UTC'), 'coop_default_pricetag', 'decimal.precision', 7);"
+
+# coop_inventory
+# --------------
+# report id renamed from 'report_inventory_adjust' to 'report_inventory' in coop_inventory module.
+psql -c "delete from ir_ui_view where name = 'report_inventory_adjust';"
+#'report_inventory_louve' template not needed in coop_inventory module
+psql -c "delete from ir_ui_view where name = 'report_inventory_louve';"
+
+# coop_purchase
+# -------------
+# modeule: coop_purchase. views removed in 12.0
+psql -c "delete from ir_ui_view where name = 'report_purchaseorder_louve';"
+psql -c "delete from ir_ui_view where arch_fs = 'coop_purchase/views/product_template_view.xml';"
+psql -c "delete from ir_ui_view where name = 'report_purchasequotation_louve';"
+psql -c "delete from ir_ui_view where name = 'invoice.supplier.form.inherit' and model = 'account.invoice' and arch_fs = 'coop_purchase/views/purchase_view.xml';"
+psql -c "delete from ir_ui_view where arch_fs = 'coop_purchase/views/product_supplierinfo_view.xml';"
+
+# coop_shift
+# ----------
+# inherited view(event_sale_product_template_form_inherit) of product.template removed from 12.0, module: coop_shift
+#psql -c "delete from ir_ui_view where model = 'product.template' and arch_db ilike '%<label for=%event_ok%position=%attributes%';"
+#psql -c "delete from ir_ui_view where model = 'res.partner' and arch_db ilike '%expr=%field[@name=''notify_email'']%';"
+#  Weird problem: odoo.tools.convert.ParseError: "Invalid model name
+#  'create.shifts.wizard' in action definition. module: coop_shift
+#psql -c "DELETE FROM ir_act_window WHERE name = 'Create Shifts';"
+#psql -c "DELETE FROM ir_act_window WHERE src_model = 'create.shifts.wizard'"
+
+
+# coop_stock
+# ----------
+# pack_operation_product_ids removed from stock.picking models, coop_stock module
+psql -c "delete from ir_ui_view where arch_db ilike '%field[@name=''pack_operation_product_ids'']%'"
+
+
+# purchase_package_qty
+# --------------------
+# report id renamed from 'report_inventory_package' to 'report_inventory' in purchase_package_qty module.
+psql -c "delete from ir_ui_view where name = 'report_inventory_package';"
+
+
+# Migrate product print category
+psql -c "ALTER TABLE product_category_print RENAME TO product_print_category"
+psql -c "ALTER SEQUENCE product_category_print_id_seq RENAME TO product_print_category_id_seq"
+psql -c "UPDATE ir_model_data SET model = 'product.print.category' WHERE model='product.category.print'"
+psql -c "UPDATE ir_model_data SET name = 'ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
+psql -c "UPDATE ir_model_data SET name='ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
+
+
+# purchase_discount
+# -----------------
+# Change in inherited form view of res.partner in purchase_discount module
+psql -c "delete from ir_ui_view where name = 'res.partner.form.inherit' and model='res.partner';"
+
+# pos_access_rights
+# -----------------
+# res.groups xml IDs are changed in pos_access_right module
+psql -c "update ir_model_data set name = 'group_negative_qty' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_negative_qty';"
+psql -c "update ir_model_data set name = 'group_discount' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_discount';"
+psql -c "update ir_model_data set name = 'group_change_unit_price' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_change_unit_price';"
+psql -c "update ir_model_data set name = 'group_multi_order' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_multi_order';"
+psql -c "update ir_model_data set name = 'group_delete_order' where model='res.groups' and module = 'pos_access_right' and name = 'group_pos_delete_order';"
+
+# pos_payment_terminal
+# --------------------
+# for account.jounal model: 'payment_mode' field is renamed to 'pos_terminal_payment_mode' in pos_payment_terminal module
+psql -c "delete from ir_ui_view where name = 'pos.payment.terminal.journal.form'"
+
+# queue_jobs
+# field name changed in queue.job model from channel to channel_method_name;
+psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
+
+
+# Post Clean
+echo "Executing pre-$DATABASE-clean.py.."
+$CUSTOM/scripts/pre-$DATABASE-clean.py

@@ -10,7 +10,7 @@ services:
             service: odoo
 
         image: druidoo/openupgrade:12.0
-        command: exit
+        command: -- --stop-after-init
         depends_on:
             - db
         volumes:

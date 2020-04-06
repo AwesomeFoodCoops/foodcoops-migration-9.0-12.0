@@ -29,6 +29,7 @@ MODULES_TO_UNINSTALL = [
     'date_search_extended',  # Merged in coop_account and coop_point_of_sale
     'account_reconcile_writeoff_improve',  # Merged into coop_account
     'account_bank_reconciliation_rule',  # Merged into account_bank_statement_reconcile_option
+    'purchase_operation_adjust',  # Merged in product_package_qty
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
 ]
@@ -59,14 +60,10 @@ MODULES_TO_REPLACE = [
 ]
 
 MODULES_PENDING_MIGRATION = [
-    'account_bank_statement_import_caisse_epargne',
-    'account_payment_select_account',
     'account_product_fiscal_classification',
     'base_import_security_group',
     'pos_automatic_cashdrawer',
     'pos_payment_terminal_return',
-    'product_to_scale_bizerba',
-    'purchase_operation_adjust',
     'l10n_fr_pos_cert_base',
     'web_widget_image_webcam',
 ]

@@ -112,6 +112,10 @@ def _apply_configs(env):
                  }
             )
 
+    # web_m2x_options config
+    param = env['ir.config_parameter'].sudo().set_param(
+        'web_m2x_options.create', 'False')
+
 
 def _deactivate_custom_views(env):
     '''

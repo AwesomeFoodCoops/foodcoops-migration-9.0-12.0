@@ -38,6 +38,8 @@ MODULES_TO_INSTALL = [
     'account_bank_statement_reconciliation_report',
     'coop_default_pricetag',
     'coop_account_check_deposit',
+    # We want these extra modules:
+    'web_m2x_options',
     # Only if l10n_fr - TODO?
     'l10n_fr_fec_group_sale_purchase',
 ]

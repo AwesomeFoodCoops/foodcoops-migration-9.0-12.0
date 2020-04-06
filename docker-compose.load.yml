@@ -11,7 +11,7 @@ services:
         depends_on:
             - db
 
-        image: druidoo/odoo:9.0
+        image: druidoo/openupgrade:9.0
         command: odoo
         environment:
             DATABASE: &dbname migrate

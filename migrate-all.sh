@@ -9,4 +9,3 @@ docker-compose -f docker-compose.12.0.yml up --abort-on-container-exit
 
 # Standard Odoo + Project addons
 docker-compose -f docker-compose.final.yml up --abort-on-container-exit
-

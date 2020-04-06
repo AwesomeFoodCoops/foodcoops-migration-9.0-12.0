@@ -20,6 +20,8 @@ MODULES_TO_UNINSTALL = [
     'web_readonly_bypass',
     'smile_base',
     'smile_upgrade',
+    'server_mode_mail',
+    'server_mode_fetchmail',
     # Modules that have been merged into other modules:
     'louve_custom_account',
     'louve_custom_product',

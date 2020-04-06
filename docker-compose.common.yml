@@ -12,7 +12,7 @@ services:
             - db:/var/lib/postgresql/data/pgdata
 
     odoo:
-        image: druidoo/odoo:9.0
+        image: druidoo/openupgrade:9.0
         command: -- --stop-after-init --update=all
         ports:
             - "8069:8069"

@@ -80,7 +80,7 @@ def _fix_deprecated_ir_values(env):
 
     https://github.com/OCA/OpenUpgrade/issues/2270
     '''
-    ir_model_data = env̈́['ir.model.data'].search([
+    ir_model_data = env['ir.model.data'].search([
         ('model', '=', 'ir.values')])
     ir_model_data.unlink()
 

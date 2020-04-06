@@ -90,6 +90,11 @@ def _apply_post_fixes(env):
     TODO: Move this to a separate file
     '''
 
+    # Fix modules left in inconsistent states
+    module_ids = ir_module.search([
+        ('state', 'in', ['to upgrade', 'to remove'])])
+    module_ids.write({'state': 'installed'})
+
     # pos_payment_terminal: field renamed
     env.cr.execute("""
         UPDATE account_journal SET pos_terminal_payment_mode = payment_mode;

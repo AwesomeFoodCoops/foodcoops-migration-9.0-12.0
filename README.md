@@ -4,16 +4,11 @@ To migrate a database from 9.0 to 12.0, using openupgrade.
 
 # Setup
 
-## 1. Download openupgrade and all repositories required
+## 1. Download required repositories
 
-First step is downloading openupgrade and all the required repositories.
+First step is downloading all the required repositories.
 
 `./setup.py`
-
-By executing this command, openupgrade versions 9.0, 10.0, 11.0 and 12.0 will be downloaded.
-To know more about Openupgrade project, follow this link: https://github.com/OCA/OpenUpgrade
-
-Also all the required repositories for 12.0 will also be downloaded.
 
 ## 2. Log in to docker.hub
 

@@ -27,6 +27,7 @@ Start the container:
 `docker-compose -f docker-compose.load.yml up`
 
 Then access https://localhost/8069 on your browser, and upload your database.
+
 **IMPORTANT:** Database name has to be exactly: `migrate`.
 
 

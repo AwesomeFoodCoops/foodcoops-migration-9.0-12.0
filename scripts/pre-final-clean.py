@@ -157,6 +157,20 @@ def _deactivate_orphan_views(env):
         })
 
 
+def _fix_deprecated_ir_values(env):
+    '''
+    ir.values does not exist anymore in 12.0
+    But for some reason, ir_model_data still points to that
+    model for some old act_window actions.
+
+    This function will remove the related act_window, and its
+    ir_model_data.
+    '''
+    ir_model_data = env̈́['ir.model.data'].search([
+        ('model', '=', 'ir.values')])
+    ir_model_data.unlink()
+
+
 def _report_modules_states(env):
     # Modules to install
     modules = env['ir.module.module'].search([
@@ -189,6 +203,9 @@ def main(env):
     # Already done in pre-9.0 so probably not needed here
     _deactivate_custom_views(env)
     _deactivate_orphan_views(env)
+
+    # This should probably be fixed in openupgrade
+    # _fix_deprecated_ir_values(env)
 
     # Debug
     _report_modules_states(env)

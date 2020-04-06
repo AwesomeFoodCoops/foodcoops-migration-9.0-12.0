@@ -14,8 +14,8 @@ services:
         depends_on:
             - db
         volumes:
-            - ./sources/repositories:/home/odoo/src/repositories
-            - ./backups:/home/odoo/custom/backups
+            - ./sources/repositories:/home/odoo/src/repositories:ro
+            - ./backups:/home/odoo/custom/backups:rw
         environment:
             PREVIOUS_DATABASE: mig-12.0
             DATABASE: &dbname final

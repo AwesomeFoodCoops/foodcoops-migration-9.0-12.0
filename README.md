@@ -41,3 +41,6 @@ Then `CTRL+C` to stop the container.
 
 It'll be located in `backups/final.zip`
 
+## 4. Cleaning up
+
+After you finished, you can remove all containers and volumes by running `clean.sh`

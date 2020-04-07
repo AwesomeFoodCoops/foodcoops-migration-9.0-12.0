@@ -45,6 +45,8 @@ MODULES_TO_INSTALL = [
     'web_m2x_options',
     # Only if l10n_fr - TODO?
     'l10n_fr_fec_group_sale_purchase',
+    # Somehow uninstalled by openupgrade
+    'account_cancel',
 ]
 
 MODULES_TO_REPLACE = [

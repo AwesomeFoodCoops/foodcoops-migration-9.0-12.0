@@ -27,6 +27,7 @@ MODULES_TO_UNINSTALL = [
     'louve_custom_product',
     'louve_custom_email',
     'louve_welcome_email',
+    'louve_custom_purchase',
     'pos_product_barcodes',  # Merged with coop_point_of_sale
     'date_search_extended',  # Merged in coop_account and coop_point_of_sale
     'account_reconcile_writeoff_improve',  # Merged into coop_account

@@ -15,21 +15,16 @@ services:
             - db
         ports:
             - "8069:8069"
-        volumes:
-            - ./sources/repositories:/home/odoo/src/repositories
         environment:
-            DATABASE: &dbname final
+            DATABASE: &dbname mig-12.0
             PGDATABASE: *dbname
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                # Installing requirements.txt
-                for repo in /home/odoo/src/repositories/* ; do
-                    if [ -f "$$repo/requirements.txt" ]; then
-                        echo "Installing $$repo/requirements.txt.."
-                        pip install --user -r $$repo/requirements.txt
-                    fi
-                done
+                echo "Cloning repositories.."
+                autoaggregate --config /home/odoo/custom/resources/repos.$$ODOO_VERSION.yml --install --output $$SOURCES/repositories
+                /home/odoo/.resources/entrypoint.d/400-auto-detect-addons
+                /home/odoo/.resources/entrypoint.d/500-config-generate
 
 volumes:
     db:

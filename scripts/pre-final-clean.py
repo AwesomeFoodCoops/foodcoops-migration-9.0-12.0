@@ -197,6 +197,9 @@ def _apply_configs(env):
     # web_m2x_options config
     param = env['ir.config_parameter'].sudo().set_param(
         'web_m2x_options.create', 'False')
+    companies = env['res.company'].search([])
+    if companies:
+        companies.write({'check_deposit_post_move': True})
 
 
 @click.command()

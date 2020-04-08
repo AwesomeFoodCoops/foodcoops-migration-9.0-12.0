@@ -1,6 +1,5 @@
 # Relevant to this script
 sources/*
-resources/*
 backups/*
 
 # Byte-compiled / optimized / DLL files

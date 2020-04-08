@@ -1,0 +1,9 @@
+../AwesomeFoodCoops:
+  defaults:
+    depth: 1
+  remotes:
+    origin: https://github.com/AwesomeFoodCoops/odoo-production.git
+  merges:
+    - origin 9.0
+  target: origin 9.0
+  shell_command_after: ln -s ../AwesomeFoodCoops/extra_addons extra_addons && ln -s ../AwesomeFoodCoops/intercoop_addons intercoop_addons && ln -s ../AwesomeFoodCoops/louve_addons louve_addons

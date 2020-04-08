@@ -3,6 +3,7 @@ services:
 
     db:
         image: postgres:10.6
+        command: docker-entrypoint.sh postgres -c work_mem=512MB
         environment:
             POSTGRES_USER: odoo
             POSTGRES_PASSWORD: odoo
@@ -25,7 +26,9 @@ services:
             FIXDBS: 'false'
 
         volumes:
-            - ./scripts:/home/odoo/custom/scripts
+            - ./resources:/home/odoo/custom/resources:ro
+            - ./scripts:/home/odoo/custom/scripts:ro
+            - ./backups:/home/odoo/custom/backups:rw
             - filestore:/home/odoo/data
 
 volumes:

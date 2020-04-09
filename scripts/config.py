@@ -71,6 +71,5 @@ MODULES_PENDING_MIGRATION = [
     'base_import_security_group',
     'pos_automatic_cashdrawer',
     'pos_payment_terminal_return',
-    'l10n_fr_pos_cert_base',
     'web_widget_image_webcam',
 ]

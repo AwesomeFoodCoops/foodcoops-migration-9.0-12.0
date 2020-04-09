@@ -432,3 +432,13 @@ druidoo-addons:
     merges:
         - origin $ODOO_VERSION
     target: origin $ODOO_VERSION
+
+# Foodcoops
+foodcoops:
+    defaults:
+        depth: 1
+    remotes:
+        origin: https://github.com/druidoo/foodcoops.git
+    merges:
+        - origin $ODOO_VERSION
+    target: origin $ODOO_VERSION

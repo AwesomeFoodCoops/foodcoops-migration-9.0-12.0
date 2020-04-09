@@ -198,6 +198,11 @@ def _apply_configs(env):
     param = env['ir.config_parameter'].sudo().set_param(
         'web_m2x_options.create', 'False')
 
+    # Configure account_check_deposit to validate moves automatically
+    company_ids = env['res.company'].search([])
+    if company_ids:
+        company_ids.write({'check_deposit_post_move': True})
+
 
 @click.command()
 @click_odoo.env_options(default_log_level='error')

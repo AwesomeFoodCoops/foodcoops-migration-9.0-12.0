@@ -169,7 +169,7 @@ def _apply_post_fixes(env):
 
     # Fix modules left in inconsistent states
     module_ids = env['ir.module.module'].search([
-        ('state', 'in', ['to upgrade', 'to remove'])])
+        ('state', 'in', ['to upgrade'])])
     module_ids.write({'state': 'installed'})
 
     # pos_payment_terminal: field renamed

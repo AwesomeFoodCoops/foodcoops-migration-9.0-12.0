@@ -1,4 +1,4 @@
-../AwesomeFoodCoops:
+AwesomeFoodCoops:
   defaults:
     depth: 1
   remotes:
@@ -6,4 +6,4 @@
   merges:
     - origin 9.0
   target: origin 9.0
-  shell_command_after: ln -s extra_addons ../repositories/extra_addons && ln -s intercoop_addons ../repositories/intercoop_addons && ln -s louve_addons ../repositories/louve_addons
+  shell_command_after: "ln -sf extra_addons ../extra_addons && ln -sf intercoop_addons ../intercoop_addons && ln -sf louve_addons ../louve_addons"

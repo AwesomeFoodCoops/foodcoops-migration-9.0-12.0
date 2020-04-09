@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+echo "Installing repositories requirements.."
+for repo in $SOURCES/repositories/* ; do
+    if [ -f "$$repo/requirements.txt" ]; then
+        echo "Installing $$repo/requirements.txt.."
+        pip install --user -r $$repo/requirements.txt
+    fi
+done
+
+# Installing latest openupgrade version
+echo "Installing latest version of openupgradelib.."
+# pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
+# until https://github.com/OCA/openupgradelib/pull/203 is merged:
+pip install --user --ignore-installed git+https://github.com/druidoo-dev/openupgradelib.git@imp-merge-records
+
+# Database Backup
+echo "Creating database backup: $PGDATABASE"
+click-odoo-dropdb --if-exists $PGDATABASE
+click-odoo-copydb -f $PREVIOUS_DATABASE $PGDATABASE
+
+# Run pre-migration script
+echo "Running pre-migration scripts.."
+if [[ -f $CUSTOM/scripts/pre-$PGDATABASE ]]; then $CUSTOM/scripts/pre-$PGDATABASE; fi
+
+# Update modules
+odoo --stop-after-init --update=all
+
+# Run post-migration script
+echo "Running pre-migration scripts.."
+if [[ -f $CUSTOM/scripts/post-$PGDATABASE ]]; then $CUSTOM/scripts/post-$PGDATABASE; fi
+
+# Save the database backup
+if [ "$SAVE_BACKUP" == "true" ]; then
+    click-odoo-backupdb --force $PGDATABASE $CUSTOM/backups/$PGDATABASE.zip
+fi

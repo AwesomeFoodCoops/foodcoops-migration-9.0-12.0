@@ -209,15 +209,15 @@ def main(env):
 
     # Already done in pre-9.0 so probably not needed here
     # anyways, it doesn't hurt
-    _deactivate_custom_views(env)
-    _deactivate_orphan_views(env)
+    # _deactivate_custom_views(env)
+    # _deactivate_orphan_views(env)
 
     # This should probably be fixed in openupgrade
     _fix_deprecated_ir_values(env)
 
-    _upgrade_modules(env)
-    _uninstall_modules(env)
-    _install_modules(env)
+    # _upgrade_modules(env)
+    # _uninstall_modules(env)
+    # _install_modules(env)
 
     # Almost ready, time for last minute fixes and config setup
     _apply_post_fixes(env)

@@ -4,11 +4,11 @@ set -e
 # Account Asset Management
 # ------------------------
 # Deactivate old account_asset module views
-psql -c "UPDATE ir_ui_view SET active = False WHERE arch_fs ILIKE 'account_asset/%'"
+#psql -c "UPDATE ir_ui_view SET active = False WHERE arch_fs ILIKE 'account_asset/%'"
 
 # queue_jobs
 # ----------
-psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
+#psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
 
 # coop_account_check_deposit
 # --------------------------
@@ -43,9 +43,5 @@ psql << SQL
 	SET 	operation_extra_id = sml.id
 	FROM 	stock_pack_operation spo
 	JOIN 	stock_move_line sml ON (sml.picking_id = spo.picking_id AND sml.product_id = spo.product_id)
-	WHERE pol.operation_extra_id = spo.id
+	WHERE operation_extra_id = spo.id
 SQL
-
-# Post Clean
-echo "Executing pre-$DATABASE.py.."
-$CUSTOM/scripts/pre-$DATABASE.py

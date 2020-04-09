@@ -10,33 +10,14 @@ services:
             service: odoo
 
         image: druidoo/openupgrade:12.0
-        command: -- --stop-after-init
         depends_on:
             - db
+        volumes:
+            - ./sources/12.0:/home/odoo/src/repositories:ro
         environment:
             PREVIOUS_DATABASE: mig-11.0
-            DATABASE: &dbname mig-12.0
-            PGDATABASE: *dbname
-            CUSTOM_ENTRYPOINT: |-
-                #!/bin/bash
-                set -e
-                echo "Cloning repositories.."
-                autoaggregate --config /home/odoo/custom/resources/repos.$$ODOO_VERSION.yml --install --output $$SOURCES/repositories
-                /home/odoo/.resources/entrypoint.d/400-auto-detect-addons
-                /home/odoo/.resources/entrypoint.d/500-config-generate
-                pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
-                echo "Creating database backup: $$DATABASE"
-                click-odoo-dropdb --if-exists $$DATABASE
-                click-odoo-copydb -f $$PREVIOUS_DATABASE $$DATABASE
-                # Run pre-migration script
-                if [[ -f $$CUSTOM/scripts/pre-$$DATABASE ]]; then
-                    echo "Running script: pre-$$DATABASE.."
-                    $$CUSTOM/scripts/pre-$$DATABASE
-                fi
-                # Last update all modules
-                odoo --stop-after-init --update=all
-                # Serve the final database backup
-                click-odoo-backupdb --force $$DATABASE $$CUSTOM/backups/$$ODOO_VERSION.zip
+            PGDATABASE: mig-12.0
+            SAVE_BACKUP: 'true'
 
 volumes:
     db:

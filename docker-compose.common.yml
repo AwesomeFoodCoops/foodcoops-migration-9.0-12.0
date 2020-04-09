@@ -3,7 +3,6 @@ services:
 
     db:
         image: postgres:10.6
-        command: docker-entrypoint.sh postgres -c work_mem=512MB
         environment:
             POSTGRES_USER: odoo
             POSTGRES_PASSWORD: odoo
@@ -14,19 +13,22 @@ services:
 
     odoo:
         image: druidoo/openupgrade:9.0
-        command: -- --stop-after-init --update=all
+        command: -- --stop-after-init
         tty: true
         stdin_open: true
 
         environment:
             WAIT_PG: 'true'
-            LIST_DB: 'true'
+            LIST_DB: 'True'
             WORKERS: 0
             PROXY_MODE: 'false'
             FIXDBS: 'false'
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                set -e
+                /home/odoo/custom/scripts/common
 
         volumes:
-            - ./resources:/home/odoo/custom/resources:ro
             - ./scripts:/home/odoo/custom/scripts:ro
             - ./backups:/home/odoo/custom/backups:rw
             - filestore:/home/odoo/data

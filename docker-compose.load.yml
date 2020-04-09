@@ -12,9 +12,12 @@ services:
             - db
         ports:
             - "8069:8069"
-
         image: druidoo/openupgrade:9.0
         command: odoo
+        environment:
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                set -e
 
 volumes:
     db:

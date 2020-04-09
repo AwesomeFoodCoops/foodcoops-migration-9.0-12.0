@@ -1,14 +1,9 @@
 #!/bin/bash
 set -e
 
-# Account Asset Management
-# ------------------------
-# Deactivate old account_asset module views
-#psql -c "UPDATE ir_ui_view SET active = False WHERE arch_fs ILIKE 'account_asset/%'"
-
 # queue_jobs
 # ----------
-#psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
+psql -c "ALTER TABLE queue_job RENAME COLUMN channel TO channel_method_name;"
 
 # coop_account_check_deposit
 # --------------------------

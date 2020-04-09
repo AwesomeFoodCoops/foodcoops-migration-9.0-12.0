@@ -41,6 +41,7 @@ MODULES_TO_INSTALL = [
     'account_bank_statement_reconciliation_report',
     'coop_default_pricetag',
     'coop_account_check_deposit',
+    # 'coop_account_product_fiscal_classification',
     # We want these extra modules:
     'web_m2x_options',
     # Only if l10n_fr - TODO?
@@ -67,7 +68,6 @@ MODULES_TO_REPLACE = [
 ]
 
 MODULES_PENDING_MIGRATION = [
-    'account_product_fiscal_classification',
     'base_import_security_group',
     'pos_automatic_cashdrawer',
     'pos_payment_terminal_return',

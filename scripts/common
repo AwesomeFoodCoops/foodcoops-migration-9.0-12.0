@@ -11,9 +11,7 @@ done
 
 # Installing latest openupgrade version
 echo "Installing latest version of openupgradelib.."
-# pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
-# until https://github.com/OCA/openupgradelib/pull/203 is merged:
-pip install --user --ignore-installed git+https://github.com/druidoo-dev/openupgradelib.git@imp-merge-records
+pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
 
 # Database Backup
 echo "Creating database backup: $PGDATABASE"

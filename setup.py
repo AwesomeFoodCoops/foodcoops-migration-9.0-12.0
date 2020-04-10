@@ -27,6 +27,8 @@ for version in ['9.0', '10.0', '11.0', '12.0']:
     REPOSITORIES = os.path.join(SOURCES, version)
     if not os.path.exists(REPOSITORIES):
         os.makedirs(REPOSITORIES)
+    if not os.path.exists(os.path.join(RESOURCES, 'repos.%s.yml' % version)):
+        continue
     check_call(
         [
             'gitaggregate',

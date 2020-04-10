@@ -35,6 +35,9 @@ MODULES_TO_UNINSTALL = [
     'purchase_operation_adjust',  # Merged in product_package_qty
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
+    # Deprecated modules
+    # https://github.com/OCA/account-financial-reporting/issues/466#issuecomment-445182691
+    'account_financial_report_date_range',
 ]
 
 MODULES_TO_INSTALL = [

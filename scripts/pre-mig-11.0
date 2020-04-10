@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+# base
+# ----
+psql -c "DELETE FROM ir_model_data WHERE model = 'ir.values'"

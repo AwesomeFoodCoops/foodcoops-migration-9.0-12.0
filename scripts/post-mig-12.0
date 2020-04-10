@@ -29,62 +29,6 @@ def _report_modules_states(env):
             '\n\nModules to remove:\n%s' % '\n'.join(modules.mapped('name')))
 
 
-def _deactivate_custom_views(env):
-    '''
-    Gets views that are not linked to any
-    installed module (no ir.model.data)
-    '''
-
-    ir_model_data = env['ir.model.data'].search([
-        ('model', '=', 'ir.ui.view')])
-    view_ids = env['ir.ui.view'].search([
-        ('id', 'not in', ir_model_data.mapped('res_id'))])
-    for view in view_ids:
-        _logger.info('Deactivating custom view (%s): %s' % (
-            view.type, view.name))
-        view.write({
-            'active': False,
-            'name': '%s | Deactivated because of migration' % view.name,
-        })
-
-
-def _deactivate_orphan_views(env):
-    '''
-    Orphan views are views of uninstalled modules
-    For some reason OpenUpgrade keept them.
-    '''
-    uninstalled_modules = env['ir.module.module'].search([
-        ('state', 'not in', ['installed', 'to upgrade'])])
-    ir_model_data = env['ir.model.data'].search([
-        ('module', 'in', uninstalled_modules.mapped('name')),
-        ('model', '=', 'ir.ui.view')])
-    view_ids = env['ir.ui.view'].search([
-        ('id', 'in', ir_model_data.mapped('res_id'))])
-    for view in view_ids:
-        _logger.info('Deactivating orphan view (%s): %s' % (
-            view.type, view.name))
-        view.write({
-            'active': False,
-            'name': '%s | Deactivated orphan view' % view.name,
-        })
-
-
-def _fix_deprecated_ir_values(env):
-    '''
-    ir.values does not exist anymore in 12.0
-    But for some reason, ir_model_data still points to that
-    model for some old act_window actions.
-
-    This function will remove the related act_window, and its
-    ir_model_data.
-
-    https://github.com/OCA/OpenUpgrade/issues/2270
-    '''
-    ir_model_data = env['ir.model.data'].search([
-        ('model', '=', 'ir.values')])
-    ir_model_data.unlink()
-
-
 def _upgrade_modules(env):
     '''
     Upgrade all installed modules, with exception
@@ -211,14 +155,6 @@ def main(env):
     ir_module = env['ir.module.module']
     ir_module.update_list()
     _logger.info('Module list updated...')
-
-    # Already done in pre-9.0 so probably not needed here
-    # anyways, it doesn't hurt
-    # _deactivate_custom_views(env)
-    # _deactivate_orphan_views(env)
-
-    # This should probably be fixed in openupgrade
-    _fix_deprecated_ir_values(env)
 
     _upgrade_modules(env)
     _uninstall_modules(env)

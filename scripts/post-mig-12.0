@@ -121,6 +121,10 @@ def _apply_post_fixes(env):
         UPDATE account_journal SET pos_terminal_payment_mode = payment_mode;
     """)
 
+    # TODO: reset login of admin and system
+    env.ref('base.user_admin').write({'login': 'admin'})
+    env.ref('base.user_root').write({'login': '__system__'})
+
 
 def _apply_configs(env):
     '''

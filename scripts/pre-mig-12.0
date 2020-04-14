@@ -20,7 +20,6 @@ psql -c "ALTER TABLE product_category_print RENAME TO product_print_category"
 psql -c "ALTER SEQUENCE product_category_print_id_seq RENAME TO product_print_category_id_seq"
 psql -c "UPDATE ir_model_data SET model = 'product.print.category' WHERE model='product.category.print'"
 psql -c "UPDATE ir_model_data SET name = 'ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
-psql -c "UPDATE ir_model_data SET name='ppc_demo_category' WHERE name='demo_category' AND model='product.print.category'"
 
 # pos_access_rights
 # -----------------

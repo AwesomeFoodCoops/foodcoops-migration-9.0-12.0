@@ -77,7 +77,5 @@ MODULES_TO_REPLACE = [
 
 MODULES_PENDING_MIGRATION = [
     'base_import_security_group',
-    'pos_automatic_cashdrawer',
-    'pos_payment_terminal_return',
     'web_widget_image_webcam',
 ]

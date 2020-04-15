@@ -47,11 +47,13 @@ MODULES_TO_INSTALL = [
     'coop_account_check_deposit',
     'coop_account_product_fiscal_classification',
     # We want these extra modules:
-    'l10n_fr_certification',
-    'l10n_fr_pos_cert',
     'web_m2x_options',
     # Only if l10n_fr - TODO?
+    'l10n_fr_fec_background',
+    'l10n_fr_coop_default_pricetag',
     'l10n_fr_fec_group_sale_purchase',
+    'l10n_fr_certification',
+    'l10n_fr_pos_cert',
     # Somehow uninstalled by openupgrade
     'account_cancel',
 ]

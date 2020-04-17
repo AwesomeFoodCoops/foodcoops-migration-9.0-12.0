@@ -1,13 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Installing repositories requirements.."
-for repo in $SOURCES/repositories/* ; do
-    if [ -f "$repo/requirements.txt" ]; then
-        echo "Installing $repo/requirements.txt.."
-        pip install --user --retries 50 -r $repo/requirements.txt
-    fi
-done
+$CUSTOM/scripts/common.install_repo_requirements
 
 # Installing latest openupgrade version
 echo "Installing latest version of openupgradelib.."

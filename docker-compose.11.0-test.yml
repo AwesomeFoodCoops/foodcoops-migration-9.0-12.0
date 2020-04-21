@@ -1,0 +1,28 @@
+version: '2.4'
+services:
+    db:
+        extends:
+            file: docker-compose.common.yml
+            service: db
+    odoo:
+        extends:
+            file: docker-compose.common.yml
+            service: odoo
+
+        image: druidoo/odoo:11.0
+        command: odoo
+        depends_on:
+            - db
+        ports:
+            - "8069:8069"
+        environment:
+            DATABASE: &dbname mig-11.0
+            PGDATABASE: *dbname
+            CUSTOM_ENTRYPOINT: |-
+                #!/bin/bash
+                set -e
+                $$CUSTOM/scripts/common.install_repo_requirements
+
+volumes:
+    db:
+    filestore:

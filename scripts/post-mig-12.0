@@ -157,7 +157,7 @@ def _apply_configs(env):
 
     # Set default report layout
     company_ids.write({
-        'external_report_layout_id': env.ref('web.external_layout_background'),
+        'external_report_layout_id': env.ref('web.external_layout_boxed'),
     })
 
 

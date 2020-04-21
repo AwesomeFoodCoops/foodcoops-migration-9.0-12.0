@@ -77,5 +77,4 @@ MODULES_TO_REPLACE = [
 
 MODULES_PENDING_MIGRATION = [
     'base_import_security_group',
-    'web_widget_image_webcam',
 ]

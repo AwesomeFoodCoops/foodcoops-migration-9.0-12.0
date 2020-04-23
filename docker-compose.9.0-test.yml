@@ -9,21 +9,18 @@ services:
             file: docker-compose.common.yml
             service: odoo
 
-        image: druidoo/odoo:11.0
+        image: druidoo/odoo-foodcoops:9.0
         command: odoo
         depends_on:
             - db
         ports:
             - "8069:8069"
-        volumes:
-            - ./sources/11.0:/home/odoo/src/repositories:ro
         environment:
-            DATABASE: &dbname mig-11.0
+            DATABASE: &dbname migrate
             PGDATABASE: *dbname
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                $$CUSTOM/scripts/common.install_repo_requirements
 
 volumes:
     db:

@@ -15,6 +15,8 @@ services:
             - db
         ports:
             - "8069:8069"
+        volumes:
+            - ./sources/12.0:/home/odoo/src/repositories:ro
         environment:
             DATABASE: &dbname mig-12.0
             PGDATABASE: *dbname

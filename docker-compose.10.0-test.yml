@@ -9,16 +9,16 @@ services:
             file: docker-compose.common.yml
             service: odoo
 
-        image: druidoo/odoo:11.0
+        image: druidoo/odoo:10.0
         command: odoo
         depends_on:
             - db
         ports:
             - "8069:8069"
         volumes:
-            - ./sources/11.0:/home/odoo/src/repositories:ro
+            - ./sources/10.0:/home/odoo/src/repositories:ro
         environment:
-            DATABASE: &dbname mig-11.0
+            DATABASE: &dbname mig-10.0
             PGDATABASE: *dbname
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash

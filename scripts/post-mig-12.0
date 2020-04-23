@@ -130,6 +130,10 @@ def _apply_post_fixes(env):
     env.ref('base.user_admin').write({'login': 'admin'})
     env.ref('base.user_root').write({'login': '__system__'})
 
+    # Display name of categories not considering languages
+    # https://www.druidoo.io/web#id=2149&action=367&model=project.task&view_type=form&menu_id=237
+    env['product.category'].search([])._compute_complete_name()
+
 
 def _apply_configs(env):
     '''

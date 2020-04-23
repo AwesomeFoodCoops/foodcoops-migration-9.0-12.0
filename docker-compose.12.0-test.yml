@@ -9,7 +9,7 @@ services:
             file: docker-compose.common.yml
             service: odoo
 
-        image: druidoo/odoo:12.0
+        image: druidoo/odoo-saas:12.0
         command: odoo
         depends_on:
             - db
@@ -23,7 +23,7 @@ services:
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                $$CUSTOM/scripts/common.install_repo_requirements
+                pip install --user -r /home/odoo/src/repositories/foodcoops/requirements.txt
 
 volumes:
     db:

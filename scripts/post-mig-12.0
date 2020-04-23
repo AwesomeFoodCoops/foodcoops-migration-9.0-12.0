@@ -130,16 +130,23 @@ def _apply_post_fixes(env):
     env.ref('base.user_admin').write({'login': 'admin'})
     env.ref('base.user_root').write({'login': '__system__'})
 
-    # Display name of categories not considering languages
-    # https://www.druidoo.io/web#id=2149&action=367&model=project.task&view_type=form&menu_id=237
-    env['product.category'].search([])._compute_complete_name()
-
     # Reload translations terms
     _logger.info('Reloading translation terms..')
     langs = [l[0] for l in env['res.lang'].get_installed()]
     modules = env['ir.module.module'].search([('state', '=', 'installed')])
     modules.with_context(overwrite=True)._update_translations(langs)
     env.cr.execute('ANALYZE ir_translation')
+
+    # Display name of categories not considering languages
+    # https://www.druidoo.io/web#id=2149&action=367&model=project.task&view_type=form&menu_id=237
+    env['product.category'].search([])._compute_complete_name()
+
+    # Fix image resizing
+    # https://www.druidoo.io/web#id=2164&action=367&model=project.task&view_type=form&menu_id=237
+    _logger.info('Recomputing partner images..')
+    partners = env['res.partner'].search([('image', '!=', False)])
+    for partner in partners:
+        partner.write({'image': partner.image})
 
 
 def _apply_configs(env):

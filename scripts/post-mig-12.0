@@ -134,6 +134,13 @@ def _apply_post_fixes(env):
     # https://www.druidoo.io/web#id=2149&action=367&model=project.task&view_type=form&menu_id=237
     env['product.category'].search([])._compute_complete_name()
 
+    # Reload translations terms
+    _logger.info('Reloading translation terms..')
+    langs = [l[0] for l in env['res.lang'].get_installed()]
+    modules = env['ir.module.module'].search([('state', '=', 'installed')])
+    modules.with_context(overwrite=True)._update_translations(langs)
+    env.cr.execute('ANALYZE ir_translation')
+
 
 def _apply_configs(env):
     '''

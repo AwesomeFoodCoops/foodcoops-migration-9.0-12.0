@@ -46,6 +46,7 @@ MODULES_TO_INSTALL = [
     'coop_default_pricetag',
     'coop_account_check_deposit',
     'coop_account_product_fiscal_classification',
+    'pos_order_wait_save',
     # We want these extra modules:
     'web_m2x_options',
     # Only if l10n_fr - TODO?

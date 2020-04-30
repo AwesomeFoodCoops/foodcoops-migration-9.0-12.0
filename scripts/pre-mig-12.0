@@ -30,6 +30,14 @@ psql -c "UPDATE ir_model_data SET name = 'user'    WHERE name = 'group_pricetag_
 # -----------------
 psql -c "UPDATE ir_model_data SET module = 'barcodes_generator_abstract' WHERE module = 'barcodes_generate'"
 
+# pos_order_return
+# -----------------
+psql -c "UPDATE ir_model_data SET module = 'pos_order_return' WHERE module = 'pos_return_order'"
+
+# pos_ticket_send_by_mail
+# -----------------------
+psql -c "UPDATE ir_model_data SET module = 'pos_ticket_send_by_mail' WHERE module = 'email_pos_receipt'"
+
 # pos_access_rights
 # -----------------
 # res.groups xml IDs are changed in pos_access_right module

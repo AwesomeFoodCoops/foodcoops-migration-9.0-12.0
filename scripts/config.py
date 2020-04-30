@@ -22,7 +22,10 @@ MODULES_TO_UNINSTALL = [
     'smile_upgrade',
     'server_mode_mail',
     'server_mode_fetchmail',
-    'l10n_pos_cert_base',  # Deprecated
+    # Deprecated
+    'l10n_fr_pos_cert_base',
+    'l10n_fr_pos_cert_trobz',
+    'local_RESTcall_from_backend',
     # Modules that have been merged into other modules:
     'louve_custom_account',
     'louve_custom_product',

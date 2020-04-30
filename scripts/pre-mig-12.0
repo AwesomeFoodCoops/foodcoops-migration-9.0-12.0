@@ -26,6 +26,10 @@ psql -c "UPDATE ir_model_data SET module = 'product_print_category' WHERE module
 psql -c "UPDATE ir_model_data SET name = 'manager' WHERE name = 'group_pricetag_manager' AND module = 'product_print_category'"
 psql -c "UPDATE ir_model_data SET name = 'user'    WHERE name = 'group_pricetag_user'    AND module = 'product_print_category'"
 
+# Barcodes generate
+# -----------------
+psql -c "UPDATE ir_model_data SET module = 'barcodes_generator_abstract' WHERE module = 'barcodes_generate'"
+
 # pos_access_rights
 # -----------------
 # res.groups xml IDs are changed in pos_access_right module

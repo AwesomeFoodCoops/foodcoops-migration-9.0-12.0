@@ -148,6 +148,15 @@ def _apply_post_fixes(env):
     for partner in partners:
         partner.write({'image': partner.image})
 
+    # New user group in pos_access_right. We set it to all pos users by default
+    # https://www.druidoo.io/web#id=2085&action=367&model=project.task&view_type=form&menu_id=237
+    user_ids = env['res.users'].search([])
+    users_to_add = user_ids.filtered(
+        lambda u: u.has_group('point_of_sale.group_pos_user'))
+    if users_to_add:
+        group_id = env.ref('pos_access_right.group_payment')
+        group_id.write({"users": [(4, u.id) for u in users_to_add]})
+
 
 def _apply_configs(env):
     '''

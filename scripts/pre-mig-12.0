@@ -15,11 +15,16 @@ psql -c "UPDATE ir_model_data SET module = 'coop_account_check_deposit' WHERE mo
 # TODO: this has a fixed id. Not sure it'll work in other databases.
 psql -c "INSERT INTO ir_model_data (id, create_uid, create_date, write_uid, write_date, noupdate, name, date_init, date_update, module, model, res_id) VALUES (nextval('ir_model_data_id_seq'), 1, (now() at time zone 'UTC'), 1, (now() at time zone 'UTC'), 't', 'decimal_product_attribute_volume', (now() at time zone 'UTC'), (now() at time zone 'UTC'), 'coop_default_pricetag', 'decimal.precision', 7);"
 
-# Migrate product print category
+# Migrate product_to_print to product_print_category
+# --------------------------------------------------
 psql -c "ALTER TABLE product_category_print RENAME TO product_print_category"
 psql -c "ALTER SEQUENCE product_category_print_id_seq RENAME TO product_print_category_id_seq"
 psql -c "UPDATE ir_model_data SET model = 'product.print.category' WHERE model = 'product.category.print'"
 psql -c "UPDATE ir_model_data SET name = 'ppc_demo_category' WHERE name = 'demo_category' AND model = 'product.print.category'"
+# User groups
+psql -c "UPDATE ir_model_data SET module = 'product_print_category' WHERE module = 'product_to_print'"
+psql -c "UPDATE ir_model_data SET name = 'manager' WHERE name = 'group_pricetag_manager' AND module = 'product_print_category'"
+psql -c "UPDATE ir_model_data SET name = 'user'    WHERE name = 'group_pricetag_user'    AND module = 'product_print_category'"
 
 # pos_access_rights
 # -----------------

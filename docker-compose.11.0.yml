@@ -17,6 +17,7 @@ services:
         environment:
             PREVIOUS_DATABASE: mig-10.0
             PGDATABASE: mig-11.0
+            STEP_BACKUP: 'true'
 
 volumes:
     db:

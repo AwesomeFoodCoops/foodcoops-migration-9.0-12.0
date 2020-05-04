@@ -17,6 +17,7 @@ services:
         environment:
             PREVIOUS_DATABASE: migrate
             PGDATABASE: mig-9.0
+            STEP_BACKUP: 'true'
 
 volumes:
     db:

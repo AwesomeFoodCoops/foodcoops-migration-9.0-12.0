@@ -6,7 +6,9 @@ echo "Starting load container.."
 sudo docker-compose -f docker-compose.load.yml up -d
 
 # Wait for it
+echo "Waiting container to be responsive"
 ./wait-for-it.sh --timeout=0 localhost:8069
+sleep 10s
 
 # Try to drop database
 curl -F name=migrate -F master_pwd=admin http://localhost:8069/web/database/drop

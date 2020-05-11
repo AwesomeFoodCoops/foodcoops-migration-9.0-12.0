@@ -177,6 +177,15 @@ def _apply_post_fixes(env):
         _logger.info('Removing website views: %s' % website_views)
         website_views.unlink()
 
+    # Remove theme_bootswatch.theme_* views
+    # For some reason they were removed in 12.0 but this is not managed
+    # by the database upgrade script. (Bug in openupgrade?)
+    theme_views = env['ir.ui.view'].with_context(active_check=False).search([
+        ('key', 'ilike', 'theme_bootswatch.theme_%')])
+    if theme_views:
+        _logger.info('Removing bootswatch theme_* views: %s' % theme_views)
+        theme_views.unlink()
+
 
 @click.command()
 @click_odoo.env_options(default_log_level='error')

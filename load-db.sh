@@ -8,6 +8,7 @@ sudo docker-compose -f docker-compose.load.yml up -d
 # Wait for it
 echo "Waiting container to be responsive"
 ./wait-for-it.sh --timeout=0 localhost:8069
+echo "Waiting another 10 seconds.. just in case"
 sleep 10s
 
 # Try to drop database

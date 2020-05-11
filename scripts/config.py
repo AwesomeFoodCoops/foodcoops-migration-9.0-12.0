@@ -63,7 +63,6 @@ MODULES_TO_INSTALL = [
 ]
 
 MODULES_TO_REPLACE = [
-    ('connector', 'queue_job'),
     ('barcodes_generate', 'barcodes_generator_abstract'),
     ('web_sheet_full_width', 'web_responsive'),
     ('product_to_print', 'product_print_category'),

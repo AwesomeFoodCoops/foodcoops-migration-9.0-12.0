@@ -98,7 +98,7 @@ def main(env):
         module_id.button_immediate_uninstall()
 
     # Deactivate views of modules we couldn't uninstall
-    _deactivate_orphan_views(env, modules_not_uninstalled)
+    # _deactivate_orphan_views(env, modules_not_uninstalled)
     _deactivate_orphan_views(env)
     _deactivate_custom_views(env)
 

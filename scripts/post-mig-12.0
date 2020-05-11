@@ -29,6 +29,27 @@ def _report_modules_states(env):
             '\n\nModules to remove:\n%s' % '\n'.join(modules.mapped('name')))
 
 
+def _deactivate_no_update(env):
+    '''
+    We use this method to deactivate the no_update
+    of some models like reports, actions, etc..
+
+    Because during a migration we really want to
+    update them.
+    '''
+    to_update = [
+        'ir.cron',
+        'ir.ui.view',
+        'ir.actions.client',
+        'res.groups',
+    ]
+
+    model_data = env['ir.module.data'].search([
+        ('model', 'in', to_update),
+        ('noupdate', '=', True)])
+    model_data.write({'noupdate': False})
+
+
 def _upgrade_modules(env):
     '''
     Upgrade all installed modules, with exception
@@ -148,6 +169,14 @@ def _apply_post_fixes(env):
     for partner in partners:
         partner.write({'image': partner.image})
 
+    # Remove wrongly generated website templates that are not migrated
+    # these are just copies from the old views (bug in openupgrade?)
+    website_views = env['ir.ui.view'].with_context(active_check=False).search([
+        ('website_id', '!=', False), ('key', '!=', False)])
+    if website_views:
+        _logger.info('Removing website views: %s' % website_views)
+        website_views.unlink()
+
 
 def _apply_configs(env):
     '''
@@ -186,6 +215,8 @@ def main(env):
     ir_module = env['ir.module.module']
     ir_module.update_list()
     _logger.info('Module list updated...')
+
+    _deactivate_no_update(env)
 
     _upgrade_modules(env)
     _uninstall_modules(env)

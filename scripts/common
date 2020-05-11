@@ -8,7 +8,7 @@ echo "Installing latest version of openupgradelib.."
 pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
 
 # Database Backup
-if [[ -f "$STEP_BACKUP" == "true" ]]; then
+if [[ "$STEP_BACKUP" == "true" ]]; then
 	echo "Creating database backup: $PGDATABASE"
 	click-odoo-dropdb --if-exists $PGDATABASE
 	click-odoo-copydb -f $PREVIOUS_DATABASE $PGDATABASE

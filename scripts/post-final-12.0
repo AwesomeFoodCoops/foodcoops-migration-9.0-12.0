@@ -13,6 +13,31 @@ def _apply_configs(env):
     Applies configurations needed in 12.0
     '''
 
+    company_ids = env['res.company'].search([])
+    pos_configs = env['pos.config'].search([])
+
+    # Pos configurations
+    for config in pos_configs:
+        if config.pricelist_id:
+            config.write(
+                {
+                    'use_pricelist': True,
+                    'available_pricelist_ids': [(4, config.pricelist_id.id)],
+                }
+            )
+
+    # web_m2x_options config
+    param = env['ir.config_parameter'].sudo().set_param(
+        'web_m2x_options.create', 'False')
+
+    # Configure account_check_deposit to validate moves automatically
+    company_ids.write({'check_deposit_post_move': True})
+
+    # Set default report layout
+    company_ids.write({
+        'external_report_layout_id': env.ref('web.external_layout_boxed').id,
+    })
+
     # New user group in pos_access_right. We set it to all pos users by default
     # https://www.druidoo.io/web#id=2085&action=367&model=project.task&view_type=form&menu_id=237
     user_ids = env['res.users'].search([])

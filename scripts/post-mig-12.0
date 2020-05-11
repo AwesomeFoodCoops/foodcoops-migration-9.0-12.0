@@ -178,36 +178,6 @@ def _apply_post_fixes(env):
         website_views.unlink()
 
 
-def _apply_configs(env):
-    '''
-    Applies configurations needed in 12.0
-    '''
-    company_ids = env['res.company'].search([])
-    pos_configs = env['pos.config'].search([])
-
-    # Pos configurations
-    for config in pos_configs:
-        if config.pricelist_id:
-            config.write(
-                {
-                    'use_pricelist': True,
-                    'available_pricelist_ids': [(4, config.pricelist_id.id)],
-                }
-            )
-
-    # web_m2x_options config
-    param = env['ir.config_parameter'].sudo().set_param(
-        'web_m2x_options.create', 'False')
-
-    # Configure account_check_deposit to validate moves automatically
-    company_ids.write({'check_deposit_post_move': True})
-
-    # Set default report layout
-    company_ids.write({
-        'external_report_layout_id': env.ref('web.external_layout_boxed').id,
-    })
-
-
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
@@ -224,7 +194,6 @@ def main(env):
 
     # Almost ready, time for last minute fixes and config setup
     _apply_post_fixes(env)
-    _apply_configs(env)
 
 
 if __name__ == '__main__':

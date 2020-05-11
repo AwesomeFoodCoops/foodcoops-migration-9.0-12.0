@@ -44,7 +44,7 @@ def _deactivate_no_update(env):
         'res.groups',
     ]
 
-    model_data = env['ir.module.data'].search([
+    model_data = env['ir.model.data'].search([
         ('model', 'in', to_update),
         ('noupdate', '=', True)])
     model_data.write({'noupdate': False})

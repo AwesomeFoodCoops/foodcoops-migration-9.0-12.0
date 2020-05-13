@@ -19,7 +19,6 @@ services:
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e
-                click-odoo-dropdb --if-exists migrate
 
 
 volumes:

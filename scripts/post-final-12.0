@@ -8,6 +8,67 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+def _apply_post_fixes(env):
+    '''
+    Post migration required by some modules
+    TODO: Move this to a separate file
+    '''
+
+    # Fix modules left in inconsistent states
+    module_ids = env['ir.module.module'].search([
+        ('state', 'in', ['to upgrade'])])
+    module_ids.write({'state': 'installed'})
+
+    # pos_payment_terminal: field renamed
+    env.cr.execute("""
+        UPDATE account_journal SET pos_terminal_payment_mode = payment_mode;
+    """)
+
+    # coop_default_pricetag: field renamed
+    env.cr.execute("""
+        UPDATE product_template SET print_category_id = category_print_id
+    """)
+
+    # TODO: reset login of admin and system
+    env.ref('base.user_admin').write({'login': 'admin'})
+    env.ref('base.user_root').write({'login': '__system__'})
+
+    # Reload translations terms
+    _logger.info('Reloading translation terms..')
+    langs = [l[0] for l in env['res.lang'].get_installed()]
+    modules = env['ir.module.module'].search([('state', '=', 'installed')])
+    modules.with_context(overwrite=True)._update_translations(langs)
+    env.cr.execute('ANALYZE ir_translation')
+
+    # Display name of categories not considering languages
+    # https://www.druidoo.io/web#id=2149&action=367&model=project.task&view_type=form&menu_id=237
+    env['product.category'].search([])._compute_complete_name()
+
+    # Fix image resizing
+    # https://www.druidoo.io/web#id=2164&action=367&model=project.task&view_type=form&menu_id=237
+    _logger.info('Recomputing partner images..')
+    partners = env['res.partner'].search([('image', '!=', False)])
+    for partner in partners:
+        partner.write({'image': partner.image})
+
+    # Remove wrongly generated website templates that are not migrated
+    # these are just copies from the old views (bug in openupgrade?)
+    website_views = env['ir.ui.view'].with_context(active_test=False).search([
+        ('website_id', '!=', False), ('key', '!=', False)])
+    if website_views:
+        _logger.info('Removing website views: %s' % website_views)
+        website_views.unlink()
+
+    # Remove theme_bootswatch.theme_* views
+    # For some reason they were removed in 12.0 but this is not managed
+    # by the database upgrade script. (Bug in openupgrade?)
+    theme_views = env['ir.ui.view'].with_context(active_test=False).search([
+        ('key', 'ilike', 'theme_bootswatch.theme_%')])
+    if theme_views:
+        _logger.info('Removing bootswatch theme_* views: %s' % theme_views)
+        theme_views.unlink()
+
+
 def _apply_configs(env):
     '''
     Applies configurations needed in 12.0
@@ -52,6 +113,7 @@ def _apply_configs(env):
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
+    _apply_post_fixes(env)
     _apply_configs(env)
 
 

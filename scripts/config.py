@@ -60,6 +60,8 @@ MODULES_TO_INSTALL = [
     'l10n_fr_pos_cert',
     # Somehow uninstalled by openupgrade
     'account_cancel',
+    # Technical modules
+    'database_cleanup',
 ]
 
 MODULES_TO_REPLACE = [

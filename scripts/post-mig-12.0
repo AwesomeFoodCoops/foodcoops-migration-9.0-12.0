@@ -171,7 +171,7 @@ def _apply_post_fixes(env):
 
     # Remove wrongly generated website templates that are not migrated
     # these are just copies from the old views (bug in openupgrade?)
-    website_views = env['ir.ui.view'].with_context(active_check=False).search([
+    website_views = env['ir.ui.view'].with_context(active_test=False).search([
         ('website_id', '!=', False), ('key', '!=', False)])
     if website_views:
         _logger.info('Removing website views: %s' % website_views)
@@ -180,7 +180,7 @@ def _apply_post_fixes(env):
     # Remove theme_bootswatch.theme_* views
     # For some reason they were removed in 12.0 but this is not managed
     # by the database upgrade script. (Bug in openupgrade?)
-    theme_views = env['ir.ui.view'].with_context(active_check=False).search([
+    theme_views = env['ir.ui.view'].with_context(active_test=False).search([
         ('key', 'ilike', 'theme_bootswatch.theme_%')])
     if theme_views:
         _logger.info('Removing bootswatch theme_* views: %s' % theme_views)

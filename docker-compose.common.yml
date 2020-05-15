@@ -18,6 +18,7 @@ services:
         stdin_open: true
 
         environment:
+            PGDATABASE: migrate
             WAIT_PG: 'true'
             LIST_DB: 'True'
             WORKERS: 0

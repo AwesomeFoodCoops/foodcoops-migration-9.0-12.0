@@ -7,25 +7,25 @@ $CUSTOM/scripts/common.install_repo_requirements
 echo "Installing latest version of openupgradelib.."
 pip install --user --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
 
-# Database Backup
-if [[ "$STEP_BACKUP" == "true" ]]; then
-	echo "Creating database backup: $PGDATABASE"
-	click-odoo-dropdb --if-exists $PGDATABASE
-	click-odoo-copydb -f $PREVIOUS_DATABASE $PGDATABASE
-fi
-
 # Run pre-migration script
 echo "Running pre-migration scripts.."
-if [[ -f $CUSTOM/scripts/pre-$PGDATABASE ]]; then $CUSTOM/scripts/pre-$PGDATABASE; fi
+if [[ -f $CUSTOM/scripts/pre-$STEP_NAME ]]; then $CUSTOM/scripts/pre-$STEP_NAME; fi
 
 # Update modules
 odoo --stop-after-init --update=all
 
 # Run post-migration script
 echo "Running pre-migration scripts.."
-if [[ -f $CUSTOM/scripts/post-$PGDATABASE ]]; then $CUSTOM/scripts/post-$PGDATABASE; fi
+if [[ -f $CUSTOM/scripts/post-$STEP_NAME ]]; then $CUSTOM/scripts/post-$STEP_NAME; fi
+
+# Database Backup
+if [[ "$STEP_BACKUP" == "true" ]]; then
+	echo "Creating database backup: $STEP_NAME"
+	click-odoo-dropdb --if-exists $STEP_NAME
+	click-odoo-copydb -f $PGDATABASE $STEP_NAME
+fi
 
 # Save the database backup
 if [ "$SAVE_BACKUP" == "true" ]; then
-    click-odoo-backupdb --force $PGDATABASE $CUSTOM/backups/$PGDATABASE.zip
+    click-odoo-backupdb --force $PGDATABASE $CUSTOM/backups/$STEP_NAME.zip
 fi

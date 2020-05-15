@@ -15,9 +15,8 @@ services:
         volumes:
             - ./sources/11.0:/home/odoo/src/repositories:ro
         environment:
-            PREVIOUS_DATABASE: mig-10.0
-            PGDATABASE: mig-11.0
-            STEP_BACKUP: 'true'
+            STEP_NAME: mig-11.0
+            #STEP_BACKUP: 'true'
 
 volumes:
     db:

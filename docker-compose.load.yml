@@ -15,7 +15,6 @@ services:
         image: druidoo/openupgrade:9.0
         command: odoo
         environment:
-            PGDATABASE: migrate
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e

@@ -52,6 +52,7 @@ MODULES_TO_INSTALL = [
     'pos_order_wait_save',
     # We want these extra modules:
     'web_m2x_options',
+    'stock_inventory_preparation_filter',
     # Only if l10n_fr - TODO?
     'l10n_fr_fec_background',
     'l10n_fr_coop_default_pricetag',

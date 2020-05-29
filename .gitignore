@@ -1,6 +1,7 @@
 # Relevant to this script
 sources/*
 backups/*
+openupgrade/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

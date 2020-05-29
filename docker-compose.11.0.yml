@@ -14,9 +14,11 @@ services:
             - db
         volumes:
             - ./sources/11.0:/home/odoo/src/repositories:ro
+            # Custom OpenUpgrade code
+            #- ./openupgrade/11.0:/home/odoo/src/odoo:ro
         environment:
             STEP_NAME: mig-11.0
-            #STEP_BACKUP: 'true'
+            STEP_BACKUP: 'true'
 
 volumes:
     db:

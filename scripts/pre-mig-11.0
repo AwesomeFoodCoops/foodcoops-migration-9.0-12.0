@@ -8,5 +8,7 @@ psql -c "DELETE FROM ir_model_data WHERE model = 'ir.values'"
 # Odoo removed the field in 10.0 and it's conflicting with us
 # https://github.com/odoo/odoo/commit/7b2ab482f3a06fadf4cdd3b566701611aaadd9b1
 # we're manually restoring it
-psql -c "ALTER TABLE res_partner ADD COLUMN birthdate VARCHAR"
-psql -c "UPDATE res_partner SET birthdate = openupgrade_legacy_10_0_birthdate"
+# we're also transforming to Date column because odoo 12.0 will not do it automatically,
+# because the field doesn't really exist anymore.
+psql -c "ALTER TABLE res_partner ADD COLUMN birthdate DATE"
+psql -c "UPDATE res_partner SET birthdate = TO_DATE(openupgrade_legacy_10_0_birthdate, 'YYYY-MM-DD') WHERE openupgrade_legacy_10_0_birthdate IS NOT NULL"

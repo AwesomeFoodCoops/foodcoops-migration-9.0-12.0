@@ -46,10 +46,18 @@ def _apply_post_fixes(env):
 
     # Fix image resizing
     # https://www.druidoo.io/web#id=2164&action=367&model=project.task&view_type=form&menu_id=237
+    # We don't use prefetch because it raises errors..
+    # We fail silently because it's not that important..
     _logger.info('Recomputing partner images..')
-    partners = env['res.partner'].search([('image', '!=', False)])
+    partners = env['res.partner'].with_context(prefetch_fields=False).search([
+        ('image', '!=', False)])
     for partner in partners:
-        partner.write({'image': partner.image})
+        try:
+            partner.write({'image': partner.image})
+        except Exception as e:
+            _logger.warning('Unable to recompute partner image: %s' % partner)
+            _logger.error(repr(e))
+            pass
 
     # Remove wrongly generated website templates that are not migrated
     # these are just copies from the old views (bug in openupgrade?)

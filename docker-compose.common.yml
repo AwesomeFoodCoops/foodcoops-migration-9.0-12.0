@@ -24,6 +24,10 @@ services:
             WORKERS: 0
             PROXY_MODE: 'false'
             FIXDBS: 'false'
+            # 100 GB memory limit
+            LIMIT_MEMORY_SOFT: 87374182400
+            LIMIT_MEMORY_HARD: 107374182400
+            # Openupgrade scripts
             CUSTOM_ENTRYPOINT: |-
                 #!/bin/bash
                 set -e

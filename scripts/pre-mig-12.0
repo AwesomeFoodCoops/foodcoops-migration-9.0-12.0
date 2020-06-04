@@ -56,3 +56,10 @@ psql << SQL
 	JOIN 	stock_move_line sml ON (sml.picking_id = spo.picking_id AND sml.product_id = spo.product_id)
 	WHERE operation_extra_id = spo.id
 SQL
+
+# Missing xmlid references for must-have records
+psql << SQL
+    DELETE FROM ir_model_data ir
+    WHERE ir.model = 'product.product'
+    AND ir.res_id NOT IN (SELECT id FROM product_product)
+SQL

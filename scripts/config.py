@@ -4,6 +4,7 @@ MODULES_TO_UNINSTALL = [
     'account_cancel',
     'account_deprecated',
     'account_budget',
+    'account_tax_exigible',  # Not managed by openupgrade, but not needed
     'account_payment_transfer_account',
     'account_finance_report_xlsx',
     'pos_transfer_account',
@@ -22,6 +23,7 @@ MODULES_TO_UNINSTALL = [
     'smile_upgrade',
     'server_mode_mail',
     'server_mode_fetchmail',
+    'pos_timeout',
     # Deprecated
     'l10n_fr_pos_cert_base',
     'l10n_fr_pos_cert_trobz',
@@ -39,6 +41,7 @@ MODULES_TO_UNINSTALL = [
     'purchase_operation_adjust',  # Merged in product_package_qty
     # Posbox modules that where installed by mistake:
     'hw_cashlogy',
+    'hw_proxy',
     # Deprecated modules
     # https://github.com/OCA/account-financial-reporting/issues/466#issuecomment-445182691
     'account_financial_report_date_range',
@@ -83,4 +86,6 @@ MODULES_TO_REPLACE = [
 ]
 
 MODULES_PENDING_MIGRATION = [
+    'account_invoice_merge_purchase',
+    'account_invoice_merge_attachment',
 ]

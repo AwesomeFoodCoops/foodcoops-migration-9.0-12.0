@@ -8,6 +8,35 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+def _uninstall_modules(env):
+    '''
+    Uninstall all planned to uninstall modules.
+    Some modules on this list might already have
+    been uninstalled by pre-clean.
+
+    But it's ok, we check again and if they're
+    present we remove them.
+    '''
+    ir_module = env['ir.module.module']
+
+    modules_to_uninstall = (
+        MODULES_TO_UNINSTALL
+        + MODULES_PENDING_MIGRATION
+        + [i[0] for i in MODULES_TO_REPLACE]
+    )
+
+    module_ids = ir_module.search([
+        ('name', 'in', modules_to_uninstall),
+        ('state', 'in', ['installed', 'to upgrade', 'to remove']),
+    ])
+
+    # Force installed state
+    # Because odoo won't uninstall modules in 'to upgrade' state
+    module_ids.write({'state': 'installed'})
+    _logger.info('Uninstalling modules: %s' % module_ids.mapped('name'))
+    module_ids.button_immediate_uninstall()
+
+
 def _apply_post_fixes(env):
     '''
     Post migration required by some modules
@@ -121,6 +150,10 @@ def _apply_configs(env):
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):
+    # We try to uninstall modules one last time
+    # in case some are left to remove
+    _uninstall_modules(env)
+
     _apply_post_fixes(env)
     _apply_configs(env)
 

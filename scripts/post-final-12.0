@@ -150,6 +150,23 @@ def _apply_configs(env):
         user.write({"groups_id": [(4, group_id.id)]})
 
 
+def _purge_database(env):
+    ''' Uses database_cleanup module to purge some data '''
+    if 'cleanup.purge.wizard.module' not in env:
+        _logger.error('Database Cleanup module not found. No purging')
+        return
+    for purge in ['module', 'data', 'property', 'model']:
+        _logger.info('Purging :: %s' % purge)
+        wizard = env['cleanup.purge.wizard.%s' % purge].create({})
+        for line in wizard.purge_line_ids:
+            try:
+                _logger.info('Purging %s: %s..' % (purge, line.name))
+                line.purge()
+            except Exception as e:
+                _logger.error(repr(e))
+                pass
+
+
 @click.command()
 @click_odoo.env_options(default_log_level='error')
 def main(env):

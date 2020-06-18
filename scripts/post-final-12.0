@@ -155,7 +155,7 @@ def _purge_database(env):
     if 'cleanup.purge.wizard.module' not in env:
         _logger.error('Database Cleanup module not found. No purging')
         return
-    for purge in ['module', 'data', 'property', 'model']:
+    for purge in ['module', 'data', 'property', 'model', 'table', 'column']:
         _logger.info('Purging :: %s' % purge)
         wizard = env['cleanup.purge.wizard.%s' % purge].create({})
         for line in wizard.purge_line_ids:
@@ -173,6 +173,7 @@ def main(env):
     # We try to uninstall modules one last time
     # in case some are left to remove
     _uninstall_modules(env)
+    _purge_database(env)
 
     _apply_post_fixes(env)
     _apply_configs(env)

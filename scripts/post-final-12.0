@@ -107,6 +107,11 @@ def _apply_post_fixes(env):
             _logger.info('Removing bootswatch theme_* views: %s' % theme_views)
             theme_views.unlink()
 
+    # Remove custom dashboards because some of them may not be compatible
+    # with the new Odoo data model
+    _logger.info("Removing dashboards (ir.ui.view.custom)...")
+    env['ir.ui.view.custom'].with_context(active_test=False).sudo().search([]).unlink()
+
 
 def _apply_configs(env):
     '''

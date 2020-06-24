@@ -88,4 +88,6 @@ MODULES_TO_REPLACE = [
 MODULES_PENDING_MIGRATION = [
     'account_invoice_merge_purchase',
     'account_invoice_merge_attachment',
+    # Migrated but it's not working properly:
+    'account_bank_statement_reconcile_option',
 ]

@@ -1,7 +1,6 @@
 
 MODULES_TO_UNINSTALL = [
     # Not needed modules:
-    'account_cancel',
     'account_deprecated',
     'account_budget',
     'account_tax_exigible',  # Not managed by openupgrade, but not needed

@@ -154,6 +154,15 @@ def _apply_configs(env):
         _logger.info('Adding "%s" group to %s' % (group_id.name, user.name))
         user.write({"groups_id": [(4, group_id.id)]})
 
+    # Remove group_location user group to everyone
+    # In case it was activated
+    env['res.config.settings'].create({
+        'group_stock_production_lot': False,
+        'group_stock_multi_locations': False,
+        'group_stock_adv_location': False,
+        'group_stock_multi_warehouses': False,
+    }).execute()
+
 
 def _purge_database(env):
     ''' Uses database_cleanup module to purge some data '''
